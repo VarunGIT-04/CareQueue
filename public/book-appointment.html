@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Book Appointment | CareQueue</title>
+  
+  <link href="/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&family=Sora:wght@600;700&display=swap" rel="stylesheet">
+  <link href="/css/portal.css" rel="stylesheet">
+  <style>
+    body { font-family: Manrope, sans-serif; background: linear-gradient(180deg,#f3f8f8,#eef3f5); }
+    .navbar { background: linear-gradient(110deg,#153744,#0b7f82)!important; }
+    h2, h3, h4, h5 { font-family: Sora, Manrope, sans-serif; }
+    .step-indicator {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+      position: relative;
+    }
+    .step-indicator::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: #e9ecef;
+      z-index: 0;
+    }
+    .step {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: white;
+      border: 2px solid #e9ecef;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      z-index: 1;
+      position: relative;
+      transition: all 0.3s;
+    }
+    .step.active {
+      border-color: #1977cc;
+      color: #1977cc;
+    }
+    .step.completed {
+      background: #1977cc;
+      border-color: #1977cc;
+      color: white;
+    }
+    .booking-card {
+      border: none;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    }
+    .slot-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 10px;
+    }
+    .slot-btn {
+      border: 1px solid #dee2e6;
+      background: white;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+    .slot-btn:hover:not([disabled]) {
+      border-color: #1977cc;
+      color: #1977cc;
+      background: #f0f7ff;
+    }
+    .slot-btn.selected {
+      background: #1977cc;
+      color: white;
+      border-color: #1977cc;
+    }
+    .slot-btn[disabled] {
+      background: #f8f9fa;
+      color: #adb5bd;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav class="navbar navbar-expand-lg navbar-dark sticky-top" style="background:linear-gradient(110deg,#153744,#0b7f82)">
+    <div class="container">
+      <a class="navbar-brand fw-bold" href="/patient-dashboard.html">
+        <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
+      </a>
+    </div>
+  </nav>
+
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="card booking-card p-4 p-md-5">
+          <h2 class="fw-bold text-center mb-4">Book Your Consultation</h2>
+          
+          <!-- Step Indicators -->
+          <div class="step-indicator">
+            <div class="step active" id="step-1-btn">1</div>
+            <div class="step" id="step-2-btn">2</div>
+            <div class="step" id="step-3-btn">3</div>
+            <div class="step" id="step-4-btn">4</div>
+          </div>
+
+          <!-- Step 1: Department & Specialist -->
+          <div id="step-1" class="booking-step">
+            <h5 class="fw-bold mb-3">1. Choose Specialization</h5>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <div class="form-check p-0">
+                  <input type="radio" class="btn-check" name="specialty" id="spec-cardio" value="Cardiology">
+                  <label class="btn btn-outline-primary w-100 p-3 text-start" for="spec-cardio">
+                    <i class="bi bi-heart-pulse me-2"></i> Cardiology
+                  </label>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-check p-0">
+                  <input type="radio" class="btn-check" name="specialty" id="spec-neuro" value="Neurology">
+                  <label class="btn btn-outline-primary w-100 p-3 text-start" for="spec-neuro">
+                    <i class="bi bi-brain me-2"></i> Neurology
+                  </label>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-check p-0">
+                  <input type="radio" class="btn-check" name="specialty" id="spec-pedia" value="Pediatrics">
+                  <label class="btn btn-outline-primary w-100 p-3 text-start" for="spec-pedia">
+                    <i class="bi bi-person-heart me-2"></i> Pediatrics
+                  </label>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-check p-0">
+                  <input type="radio" class="btn-check" name="specialty" id="spec-ortho" value="Orthopedics">
+                  <label class="btn btn-outline-primary w-100 p-3 text-start" for="spec-ortho">
+                    <i class="bi bi-bone me-2"></i> Orthopedics
+                  </label>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-check p-0">
+                  <input type="radio" class="btn-check" name="specialty" id="spec-derma" value="Dermatology">
+                  <label class="btn btn-outline-primary w-100 p-3 text-start" for="spec-derma">
+                    <i class="bi bi-droplet me-2"></i> Dermatology
+                  </label>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-check p-0">
+                  <input type="radio" class="btn-check" name="specialty" id="spec-gen" value="General Medicine">
+                  <label class="btn btn-outline-primary w-100 p-3 text-start" for="spec-gen">
+                    <i class="bi bi-hospital me-2"></i> General Medicine
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div class="text-end mt-4">
+              <button class="btn btn-primary px-5 py-2 fw-bold" onclick="nextStep(2)">Next: Select Doctor <i class="bi bi-arrow-right ms-2"></i></button>
+            </div>
+          </div>
+
+          <!-- Step 2: Select Doctor -->
+          <div id="step-2" class="booking-step d-none">
+            <h5 class="fw-bold mb-3">2. Select Your Doctor</h5>
+            <div id="doctor-list" class="row g-3 mb-4">
+              <!-- Doctors will be loaded here -->
+            </div>
+            <div class="d-flex justify-content-between mt-4">
+              <button class="btn btn-outline-secondary px-4" onclick="prevStep(1)"><i class="bi bi-arrow-left me-2"></i> Back</button>
+              <button class="btn btn-primary px-5 py-2 fw-bold" onclick="nextStep(3)" id="btn-to-step-3" disabled>Next: Select Slot <i class="bi bi-arrow-right ms-2"></i></button>
+            </div>
+          </div>
+
+          <!-- Step 3: Date & Time -->
+          <div id="step-3" class="booking-step d-none">
+            <h5 class="fw-bold mb-3">3. Choose Date & Time Slot</h5>
+            <div class="row g-4">
+              <div class="col-md-5">
+                <label class="form-label fw-semibold">Select Date</label>
+                <input type="date" class="form-control" id="booking-date" onchange="loadSlots()">
+                <div class="mt-3 p-3 bg-light rounded-3">
+                  <small class="text-muted d-block mb-1">Doctor's Availability:</small>
+                  <div id="doc-available-days" class="fw-bold text-primary small">Loading...</div>
+                </div>
+              </div>
+              <div class="col-md-7">
+                <label class="form-label fw-semibold">Available Time Slots</label>
+                <div id="slots-container" class="slot-grid">
+                  <div class="text-muted small py-4 text-center w-100">Select a date to view slots.</div>
+                </div>
+              </div>
+            </div>
+            <div class="d-flex justify-content-between mt-5">
+              <button class="btn btn-outline-secondary px-4" onclick="prevStep(2)"><i class="bi bi-arrow-left me-2"></i> Back</button>
+              <button class="btn btn-primary px-5 py-2 fw-bold" onclick="nextStep(4)" id="btn-to-step-4" disabled>Next: Confirm Details <i class="bi bi-arrow-right ms-2"></i></button>
+            </div>
+          </div>
+
+          <!-- Step 4: Final Confirmation -->
+          <div id="step-4" class="booking-step d-none">
+            <h5 class="fw-bold mb-4">4. Final Review & Confirm</h5>
+            <div class="card bg-light border-0 p-4 mb-4">
+              <div class="row gy-3">
+                <div class="col-sm-6">
+                  <small class="text-muted d-block">Specialist</small>
+                  <div class="fw-bold" id="conf-doc-name">-</div>
+                  <div class="text-primary small" id="conf-doc-spec">-</div>
+                </div>
+                <div class="col-sm-6">
+                  <small class="text-muted d-block">Date & Time</small>
+                  <div class="fw-bold" id="conf-date-time">-</div>
+                  <div class="text-success small"><i class="bi bi-clock me-1"></i> 30 Min Consultation</div>
+                </div>
+                <div class="col-sm-6">
+                  <small class="text-muted d-block">Consultation Fee</small>
+                  <div class="fw-bold fs-4 text-dark" id="conf-fee">₹0</div>
+                    <small class="text-muted">Consultation fee</small>
+                </div>
+                <div class="col-sm-6">
+                  <small class="text-muted d-block">Token Allotment</small>
+                  <div class="fw-bold text-warning">Automatic Generation</div>
+                  <small class="text-muted small">Sequential token ID will be issued</small>
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label class="form-label fw-semibold">Reason for Visit (Optional)</label>
+              <textarea class="form-control" id="booking-reason" rows="3" placeholder="Briefly describe your symptoms..."></textarea>
+            </div>
+
+            <div class="d-flex justify-content-between mt-4">
+              <button class="btn btn-outline-secondary px-4" onclick="prevStep(3)"><i class="bi bi-arrow-left me-2"></i> Back</button>
+              <button class="btn btn-success px-5 py-2 fw-bold" onclick="finishBooking()" id="btn-finish">Confirm & Book Now <i class="bi bi-check-circle ms-2"></i></button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/booking.js"></script>
+</body>
+</html>

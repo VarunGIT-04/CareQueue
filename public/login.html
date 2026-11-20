@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Portal Sign In | CareQueue</title>
+  <meta name="description" content="Secure login for patients, doctors, and hospital administrators.">
+
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="/css/hospital.css" rel="stylesheet">
+  <link href="/css/auth.css" rel="stylesheet">
+</head>
+
+<body class="auth-body">
+  <div class="auth-atmosphere" aria-hidden="true">
+    <div class="auth-orb auth-orb-a"></div>
+    <div class="auth-orb auth-orb-b"></div>
+    <div class="auth-orb auth-orb-c"></div>
+    <div class="auth-grid"></div>
+    <div class="auth-waveform"></div>
+  </div>
+
+  <header class="auth-topbar">
+    <a href="/" class="auth-brand">
+      <span class="auth-brand-mark"><i class="bi bi-heart-pulse"></i></span>
+      <span>
+        <strong>CareQueue</strong>
+        <small>Care management</small>
+      </span>
+    </a>
+    <a href="/" class="auth-home-link"><i class="bi bi-arrow-left me-1"></i> Home</a>
+  </header>
+
+  <main class="auth-shell">
+    <section class="auth-hero-panel">
+      <p class="auth-kicker">Secure care access</p>
+      <h1>Your care,<br>thoughtfully connected.</h1>
+      <p class="auth-lead">Sign in to book visits, manage your queue, and keep prescriptions close at hand.</p>
+      <ul class="auth-points">
+        <li><i class="bi bi-shield-check"></i> Role-based portals for patients, doctors, and admins</li>
+        <li><i class="bi bi-calendar2-check"></i> Live appointment tokens and visit history</li>
+        <li><i class="bi bi-file-earmark-medical"></i> Digital notes and prescriptions after each consult</li>
+      </ul>
+    </section>
+
+    <section class="auth-card">
+      <div class="auth-card-head">
+        <div class="auth-icon"><i class="bi bi-person-lock"></i></div>
+        <h2>Sign in</h2>
+        <p>Select your role and enter your credentials</p>
+      </div>
+
+      <ul class="nav nav-pills nav-fill role-nav mb-4" id="roleTabs">
+        <li class="nav-item">
+          <button type="button" class="nav-link active" id="tab-patient" onclick="switchRoleTab('patient')">
+            <i class="bi bi-person me-1"></i> Patient
+          </button>
+        </li>
+        <li class="nav-item">
+          <button type="button" class="nav-link" id="tab-doctor" onclick="switchRoleTab('doctor')">
+            <i class="bi bi-stethoscope me-1"></i> Doctor
+          </button>
+        </li>
+        <li class="nav-item">
+          <button type="button" class="nav-link" id="tab-admin" onclick="switchRoleTab('admin')">
+            <i class="bi bi-shield-lock me-1"></i> Admin
+          </button>
+        </li>
+      </ul>
+
+      <form id="hospitalLoginForm" onsubmit="handleLoginSubmit(event)">
+        <div id="login-error-alert" class="alert alert-danger py-2 small d-none mb-3"></div>
+
+        <div class="mb-3">
+          <label class="form-label fw-semibold small" for="login-email">Email address</label>
+          <div class="input-group auth-input">
+            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+            <input type="email" class="form-control" id="login-email" required placeholder="name@hospital.com" autocomplete="email">
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fw-semibold small" for="login-password">Password</label>
+          <div class="input-group auth-input">
+            <span class="input-group-text"><i class="bi bi-key"></i></span>
+            <input type="password" class="form-control" id="login-password" required placeholder="Enter password" autocomplete="current-password">
+            <button class="btn btn-outline-secondary" type="button" onclick="togglePasswordVisibility()" aria-label="Show password">
+              <i class="bi bi-eye" id="pw-eye-icon"></i>
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" class="btn auth-submit w-100 py-2 fw-semibold mb-3" id="btn-login-submit">
+          Sign in to portal
+        </button>
+
+        <div class="text-center small text-muted" id="register-hint">
+          Don't have a patient account? <a href="/register.html" class="fw-semibold auth-link">Register here</a>
+        </div>
+      </form>
+
+      <div class="demo-pill">
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <strong class="small" id="demo-box-title"><i class="bi bi-key-fill me-1"></i>Patient demo login</strong>
+          <button type="button" class="btn btn-sm btn-outline-light py-0 px-2 demo-fill-btn" onclick="quickFillCredentials()">Quick fill</button>
+        </div>
+        <div class="font-monospace demo-creds" id="demo-box-creds">varun22042@gmail.com / varun0560</div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="auth-footer">© 2026 CareQueue. All rights reserved.</footer>
+
+  <script>
+    let activeRole = "patient";
+
+    window.addEventListener("DOMContentLoaded", () => {
+      const params = new URLSearchParams(window.location.search);
+      const roleParam = params.get("role");
+      if (roleParam === "doctor" || roleParam === "admin") {
+        switchRoleTab(roleParam);
+      } else {
+        switchRoleTab("patient");
+      }
+    });
+
+    function switchRoleTab(role) {
+      activeRole = role;
+      document.querySelectorAll("#roleTabs .nav-link").forEach(btn => btn.classList.remove("active"));
+      document.getElementById(`tab-${role}`).classList.add("active");
+
+      const demoTitle = document.getElementById("demo-box-title");
+      const demoCreds = document.getElementById("demo-box-creds");
+      const regHint = document.getElementById("register-hint");
+      const card = document.querySelector(".auth-card");
+      card?.setAttribute("data-role", role);
+
+      if (role === "doctor") {
+        demoTitle.innerHTML = `<i class="bi bi-stethoscope me-1"></i>Doctor demo login`;
+        demoCreds.textContent = "rajesh.sharma@hospital.com / doctor123";
+        regHint.classList.add("d-none");
+      } else if (role === "admin") {
+        demoTitle.innerHTML = `<i class="bi bi-shield-lock me-1"></i>Admin demo login`;
+        demoCreds.textContent = "admin@hospital.com / admin123";
+        regHint.classList.add("d-none");
+      } else {
+        demoTitle.innerHTML = `<i class="bi bi-person me-1"></i>Patient demo login`;
+        demoCreds.textContent = "varun22042@gmail.com / varun0560";
+        regHint.classList.remove("d-none");
+      }
+    }
+
+    function quickFillCredentials() {
+      const emailInput = document.getElementById("login-email");
+      const passInput = document.getElementById("login-password");
+
+      if (activeRole === "doctor") {
+        emailInput.value = "rajesh.sharma@hospital.com";
+        passInput.value = "doctor123";
+      } else if (activeRole === "admin") {
+        emailInput.value = "admin@hospital.com";
+        passInput.value = "admin123";
+      } else {
+        emailInput.value = "varun22042@gmail.com";
+        passInput.value = "varun0560";
+      }
+    }
+
+    function togglePasswordVisibility() {
+      const passInput = document.getElementById("login-password");
+      const icon = document.getElementById("pw-eye-icon");
+      if (passInput.type === "password") {
+        passInput.type = "text";
+        icon.className = "bi bi-eye-slash";
+      } else {
+        passInput.type = "password";
+        icon.className = "bi bi-eye";
+      }
+    }
+
+    async function handleLoginSubmit(event) {
+      event.preventDefault();
+      const errAlert = document.getElementById("login-error-alert");
+      const btn = document.getElementById("btn-login-submit");
+
+      errAlert.classList.add("d-none");
+      btn.disabled = true;
+      btn.innerHTML = `<span class="spinner-border spinner-border-sm me-1"></span> Signing in…`;
+
+      const email = document.getElementById("login-email").value.trim();
+      const password = document.getElementById("login-password").value;
+
+      try {
+        const res = await fetch("/api/login", {
+          method: "POST",
+          credentials: "same-origin",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || "Login failed.");
+
+        const params = new URLSearchParams(window.location.search);
+        const redirectParam = params.get("redirect");
+        if (redirectParam && data.user.role === "patient") {
+          window.location.href = redirectParam;
+        } else {
+          window.location.href = data.redirectUrl || "/patient-dashboard.html";
+        }
+      } catch (err) {
+        errAlert.textContent = err.message;
+        errAlert.classList.remove("d-none");
+        btn.disabled = false;
+        btn.textContent = "Sign in to portal";
+      }
+    }
+  </script>
+</body>
+</html>

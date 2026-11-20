@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Doctor workspace | CareQueue</title>
+
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="/css/portal.css" rel="stylesheet">
+  <style>
+    :root {
+      --doc-ink: #142c36;
+      --doc-muted: #6a7f88;
+      --doc-teal: #0b7f82;
+      --doc-navy: #153744;
+      --doc-line: #e4eef0;
+      --doc-wash: #f3f8f8;
+    }
+
+    body.doctor-shell {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 0% 0%, rgba(11, 127, 130, 0.08), transparent 28%),
+        linear-gradient(180deg, #f5f9f9 0%, #eef4f5 100%);
+      color: var(--doc-ink);
+      font-family: "Manrope", "Segoe UI", sans-serif;
+    }
+
+    .doctor-layout {
+      display: grid;
+      grid-template-columns: 250px 1fr;
+      min-height: 100vh;
+    }
+
+    .doctor-sidebar {
+      background: #ffffff;
+      border-right: 1px solid var(--doc-line);
+      padding: 1.4rem 1rem;
+      display: flex;
+      flex-direction: column;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+    }
+
+    .doctor-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: var(--doc-ink);
+      padding: 0.25rem 0.6rem 1.5rem;
+    }
+
+    .doctor-brand strong {
+      display: block;
+      font-family: "Sora", Manrope, sans-serif;
+      font-size: 1.1rem;
+    }
+
+    .doctor-brand small {
+      display: block;
+      color: var(--doc-muted);
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .doctor-brand-mark {
+      width: 40px;
+      height: 40px;
+      border-radius: 13px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(145deg, var(--doc-teal), var(--doc-navy));
+      color: #fff;
+      font-size: 1.15rem;
+    }
+
+    .doctor-nav-link {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      color: #60747d;
+      text-decoration: none;
+      font-weight: 650;
+      padding: 0.75rem 0.9rem;
+      border-radius: 12px;
+      margin-bottom: 0.35rem;
+    }
+
+    .doctor-nav-link:hover,
+    .doctor-nav-link.active {
+      background: #e8f5f4;
+      color: var(--doc-teal);
+    }
+
+    .doctor-main {
+      padding: 1.5rem 1.7rem 2rem;
+    }
+
+    .doctor-hero {
+      border-radius: 22px;
+      padding: 1.5rem 1.6rem;
+      color: #f4fbfb;
+      background: linear-gradient(120deg, #163b48 0%, #1a5f66 55%, #0b7f82 100%);
+      box-shadow: 0 18px 36px rgba(18, 55, 68, 0.18);
+      margin-bottom: 1.3rem;
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .doctor-hero::after {
+      content: "";
+      position: absolute;
+      right: -40px;
+      top: -50px;
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .doctor-hero h1 {
+      font-family: "Sora", Manrope, sans-serif;
+      font-size: 1.55rem;
+      margin: 0.2rem 0 0.35rem;
+      font-weight: 700;
+    }
+
+    .doctor-hero p {
+      margin: 0;
+      color: rgba(244, 251, 251, 0.82);
+      font-size: 0.92rem;
+    }
+
+    .doc-avatar {
+      width: 54px;
+      height: 54px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      background: rgba(255, 255, 255, 0.14);
+      font-family: "Sora", Manrope, sans-serif;
+      font-weight: 700;
+      font-size: 1.3rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .panel-card {
+      background: #fff;
+      border: 1px solid var(--doc-line);
+      border-radius: 18px;
+      box-shadow: 0 10px 28px rgba(18, 55, 68, 0.05);
+      overflow: hidden;
+    }
+
+    .panel-card .card-header {
+      background: #fff;
+      border-bottom: 1px solid var(--doc-line);
+    }
+
+    .token-badge {
+      font-size: 1.05rem;
+      padding: 0.45rem 0.85rem;
+      letter-spacing: 0.04em;
+    }
+
+    .patient-queue-card {
+      transition: background 0.2s ease, border-color 0.2s ease;
+      border-left: 4px solid transparent !important;
+      text-align: left;
+    }
+
+    .patient-queue-card:hover {
+      background: #f7fbfb;
+    }
+
+    .patient-queue-card.active-patient {
+      border-left-color: var(--doc-teal) !important;
+      background: #eef8f7;
+    }
+
+    .reason-box {
+      background: var(--doc-wash);
+      border: 1px solid var(--doc-line);
+      border-radius: 14px;
+      padding: 0.95rem 1rem;
+    }
+
+    .btn-complete {
+      background: linear-gradient(135deg, var(--doc-teal), var(--doc-navy));
+      border: 0;
+      color: #fff;
+      border-radius: 12px;
+      box-shadow: 0 10px 22px rgba(11, 127, 130, 0.25);
+    }
+
+    .btn-complete:hover {
+      color: #fff;
+      filter: brightness(1.05);
+    }
+
+    .spin {
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .empty-consult {
+      min-height: 420px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    @media (max-width: 992px) {
+      .doctor-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .doctor-sidebar {
+        position: relative;
+        height: auto;
+        border-right: 0;
+        border-bottom: 1px solid var(--doc-line);
+      }
+
+      .doctor-main {
+        padding: 1rem;
+      }
+    }
+  </style>
+</head>
+
+<body class="doctor-shell">
+  <div class="doctor-layout">
+    <aside class="doctor-sidebar">
+      <a class="doctor-brand" href="/">
+        <span class="doctor-brand-mark"><i class="bi bi-heart-pulse"></i></span>
+        <span>
+          <strong>CareQueue</strong>
+          <small>Doctor portal</small>
+        </span>
+      </a>
+
+      <nav class="flex-grow-1">
+        <a class="doctor-nav-link active" href="#appointments"><i class="bi bi-calendar-check"></i> Appointments</a>
+        <a class="doctor-nav-link" href="#consultation"><i class="bi bi-journal-medical"></i> Consultation</a>
+      </nav>
+
+      <button class="btn btn-outline-danger w-100 rounded-pill" id="logout-btn" type="button">
+        <i class="bi bi-box-arrow-left me-1"></i> Logout
+      </button>
+    </aside>
+
+    <main class="doctor-main">
+      <div class="doctor-hero">
+        <div>
+          <div class="small text-uppercase fw-bold" style="letter-spacing:0.12em;opacity:.75;">Clinical workspace</div>
+          <h1>Welcome, <span id="doc-name">Doctor</span></h1>
+          <p>
+            <span id="doc-specialty">Specialty</span>
+            · <span id="pending-count" class="fw-bold">0</span> booked visits waiting
+          </p>
+        </div>
+        <div class="d-flex align-items-center gap-3">
+          <button type="button" class="btn btn-sm btn-light" id="refresh-queue">
+            <i class="bi bi-arrow-clockwise me-1" id="refresh-icon"></i>
+            <span id="refresh-label">Refresh Queue</span>
+          </button>
+          <div class="doc-avatar" id="doc-avatar-initial">D</div>
+        </div>
+      </div>
+
+      <div class="small text-muted mb-3" id="queue-updated-at">Appointments assigned to your doctor account</div>
+
+      <div class="row g-4">
+        <div class="col-lg-5" id="appointments">
+          <div class="panel-card">
+            <div class="card-header py-3 px-3">
+              <div class="d-flex justify-content-between align-items-center">
+                <h5 class="fw-bold mb-0">My appointments</h5>
+                <span class="badge bg-light text-primary border" id="queue-visible-count">0</span>
+              </div>
+              <div class="btn-group btn-group-sm mt-3 w-100" role="group" aria-label="Filter appointments">
+                <button type="button" class="btn btn-primary" id="filter-booked" onclick="setQueueFilter('Booked')">Booked</button>
+                <button type="button" class="btn btn-outline-secondary" id="filter-completed" onclick="setQueueFilter('Completed')">Completed</button>
+              </div>
+            </div>
+            <div class="card-body p-0">
+              <div id="patient-queue-list" class="list-group list-group-flush">
+                <div class="text-center py-5 text-muted">Loading queue...</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-7" id="consultation">
+          <div id="next-patient-notice" class="alert alert-success d-none rounded-3" role="status"></div>
+
+          <div id="active-consultation-panel" class="d-none">
+            <div class="panel-card mb-4">
+              <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-start mb-4">
+                  <div>
+                    <span class="badge bg-primary-subtle text-primary token-badge mb-2" id="active-token">#TKN-101</span>
+                    <h3 class="fw-bold mb-0" id="active-patient-name">Patient</h3>
+                    <p class="text-muted small mb-0" id="active-patient-meta">Patient details</p>
+                  </div>
+                  <span class="badge bg-success-subtle text-success px-3 py-2" id="consult-status-badge">
+                    <i class="bi bi-person-check me-1"></i>Ready for consultation
+                  </span>
+                </div>
+
+                <div class="reason-box mb-4">
+                  <h6 class="fw-bold small text-uppercase text-muted mb-1">Reason for visit</h6>
+                  <p class="mb-0" id="active-reason">Routine Health Checkup</p>
+                </div>
+
+                <h5 class="fw-bold mb-3">Consultation &amp; prescription</h5>
+                <div id="consult-form-error" class="alert alert-danger py-2 small d-none"></div>
+                <form id="prescription-form" onsubmit="event.preventDefault(); completeConsultation();">
+                  <div class="mb-3">
+                    <label class="form-label fw-semibold" for="clinical-notes">Clinical notes</label>
+                    <textarea class="form-control" id="clinical-notes" rows="3" placeholder="Enter diagnosis and findings..."></textarea>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label fw-semibold" for="prescription-text">Prescription (medicines &amp; dosage)</label>
+                    <textarea class="form-control" id="prescription-text" rows="4" placeholder="e.g. Paracetamol 500mg - 1-0-1 after food - 3 days"></textarea>
+                  </div>
+                  <div class="d-grid">
+                    <button type="submit" id="complete-consultation" class="btn btn-complete py-2 fw-bold">
+                      <i class="bi bi-check2-circle me-1"></i> Complete visit &amp; call next patient
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <div id="no-active-panel" class="panel-card empty-consult">
+            <div class="text-center p-5">
+              <i class="bi bi-person-check fs-1 text-muted opacity-25 d-block mb-3"></i>
+              <h5>Select a patient from the queue to start consultation.</h5>
+              <p class="text-muted small mb-0">You can see tokens and slot times in the list.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/doctor-dashboard.js"></script>
+</body>
+</html>

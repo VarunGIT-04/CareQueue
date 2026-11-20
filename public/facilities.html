@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>Facilities | CareQueue</title>
+  <meta name="description" content="Facilities and services that make appointments simple and reliable on CareQueue.">
+
+  <!-- Icons -->
+  <link href="assets/img/favicon.png" rel="icon">
+  <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+  <link href="assets/vendor/aos/aos.css" rel="stylesheet">
+  <link href="assets/css/main.css" rel="stylesheet">
+  <link href="css/hospital.css" rel="stylesheet">
+
+  <style>
+    :root { --brand:#087e80; --brand-dark:#153b48; }
+    body { font-family: 'Poppins', sans-serif; }
+    .hosp-topbar { background:#133744; }
+    .hosp-navbar { box-shadow:0 5px 22px rgba(18,47,57,.07); }
+    .hosp-brand { color:var(--brand-dark); }
+    .hosp-brand .bi { color:var(--brand); }
+    .btn-primary { background:#087e80; border-color:#087e80; }
+    .page-banner {
+      background:linear-gradient(110deg,rgba(13,47,58,.93),rgba(10,86,88,.78)),url('assets/img/hero-bg.jpg') center/cover no-repeat;
+      color:#fff;
+      padding:70px 0 60px;
+    }
+    .page-crumb a { color:#93c5fd; text-decoration:none; }
+    .facility-card {
+      background:#fff; border:1px solid #e2e8f0; border-radius:18px; padding:26px;
+      height:100%; transition:all .25s ease; box-shadow:0 4px 15px rgba(15,23,42,.04);
+    }
+    .facility-card:hover { transform:translateY(-4px); box-shadow:0 12px 28px rgba(15,23,42,.09); border-color:#087e80; }
+  </style>
+</head>
+
+<body>
+
+  <!-- CareQueue project bar -->
+  <div class="hosp-topbar">
+    <div class="container d-flex justify-content-between align-items-center flex-wrap gap-2">
+      <div class="d-flex align-items-center gap-3">
+        <span><i class="bi bi-calendar2-check text-info me-1"></i> Your care, organized in one place</span>
+        <span class="d-none d-md-inline">|</span>
+        <span class="d-none d-md-inline"><i class="bi bi-shield-check text-success me-1"></i> Appointment management demo</span>
+      </div>
+      <div class="d-flex align-items-center gap-3">
+        <span><i class="bi bi-calendar-check text-success me-1"></i> Book and manage appointments</span>
+        <span class="d-none d-sm-inline">|</span>
+        <a href="/login.html?role=doctor" class="d-none d-sm-inline"><i class="bi bi-person-badge me-1"></i>Doctor Portal</a>
+        <span class="d-none d-sm-inline">|</span>
+        <a href="/login.html?role=admin" class="d-none d-sm-inline"><i class="bi bi-shield-lock me-1"></i>Admin</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Navbar -->
+  <header class="hosp-navbar sticky-top">
+    <div class="container d-flex align-items-center justify-content-between py-2">
+
+      <a href="/" class="hosp-brand">
+        <i class="bi bi-heart-pulse fs-2"></i>
+        <div>
+          <div class="lh-1">CAREQUEUE</div>
+          <small class="text-muted fw-normal" style="font-size: 0.72rem; letter-spacing: 0.5px;">YOUR CARE, CONNECTED</small>
+        </div>
+      </a>
+
+      <nav class="d-none d-lg-flex align-items-center gap-2">
+        <a href="/" class="hosp-nav-link">Home</a>
+        <a href="/departments.html" class="hosp-nav-link">Departments</a>
+        <a href="/facilities.html" class="hosp-nav-link active">Facilities</a>
+        <a href="/about.html" class="hosp-nav-link">About</a>
+        <a href="/contact.html" class="hosp-nav-link">Contact</a>
+      </nav>
+
+      <div class="d-flex align-items-center gap-2">
+        <a href="/login.html" class="btn btn-outline-primary btn-sm px-3 fw-semibold">
+          <i class="bi bi-box-arrow-in-right me-1"></i> Sign In
+        </a>
+        <a href="/login.html?redirect=/book-appointment.html" class="btn btn-primary btn-sm px-3 fw-semibold">
+          <i class="bi bi-calendar-check me-1"></i> Book Appointment
+        </a>
+      </div>
+
+    </div>
+  </header>
+
+  <main>
+
+    <!-- Page Banner -->
+    <section class="page-banner">
+      <div class="container">
+        <div class="page-crumb small mb-2">
+          <a href="/"><i class="bi bi-house me-1"></i>Home</a> <span class="opacity-75">/ Facilities</span>
+        </div>
+        <h1 class="fw-bold mb-2">Facilities &amp; Patient Care</h1>
+        <p class="mb-0 opacity-90" style="max-width: 640px;">
+          Everything you need to plan, book, and follow up on your appointment — in one connected place.
+        </p>
+      </div>
+    </section>
+
+    <!-- Facilities -->
+    <section id="facilities" class="py-5" style="background-color:#f8fafc;">
+      <div class="container py-3">
+        <div class="text-center mb-5" data-aos="fade-up">
+          <span class="text-primary fw-bold text-uppercase small" style="letter-spacing: 1px;">Built for Convenience</span>
+          <h2 class="fw-bold mt-1">Why Choose CareQueue?</h2>
+          <p class="text-muted mx-auto" style="max-width: 650px;">
+            A patient-first experience designed to remove waiting-room confusion and keep your care organized.
+          </p>
+        </div>
+
+        <div class="row g-4">
+          <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="100">
+            <div class="facility-card text-center">
+              <div class="kpi-icon kpi-blue mx-auto mb-3"><i class="bi bi-clock-history"></i></div>
+              <h5 class="fw-bold">Real-Time Slots</h5>
+              <p class="text-muted small mb-0">See exactly which time slots are open for each specialist before you book.</p>
+            </div>
+          </div>
+
+          <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="200">
+            <div class="facility-card text-center">
+              <div class="kpi-icon kpi-green mx-auto mb-3"><i class="bi bi-shield-check"></i></div>
+              <h5 class="fw-bold">No Double Booking</h5>
+              <p class="text-muted small mb-0">Slot clash protection ensures one patient per slot, per doctor — always.</p>
+            </div>
+          </div>
+
+          <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="300">
+            <div class="facility-card text-center">
+              <div class="kpi-icon kpi-orange mx-auto mb-3"><i class="bi bi-ticket-perforated"></i></div>
+              <h5 class="fw-bold">Digital Tokens</h5>
+              <p class="text-muted small mb-0">Every booking generates a token number so you know your place in the queue.</p>
+            </div>
+          </div>
+
+          <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="400">
+            <div class="facility-card text-center">
+              <div class="kpi-icon kpi-purple mx-auto mb-3"><i class="bi bi-file-earmark-medical"></i></div>
+              <h5 class="fw-bold">Digital Prescriptions</h5>
+              <p class="text-muted small mb-0">After your visit, view and print your prescription with clinical notes online.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Extra facilities -->
+    <section class="py-5 bg-white">
+      <div class="container py-3">
+        <div class="row align-items-center g-4">
+          <div class="col-lg-5" data-aos="fade-right">
+            <span class="text-primary fw-bold text-uppercase small" style="letter-spacing: 1px;">For Every Role</span>
+            <h2 class="fw-bold mt-1 mb-3">One Platform, Three Dedicated Portals</h2>
+            <p class="text-muted">
+              CareQueue keeps patients, doctors, and administrators on the same page with purpose-built dashboards.
+            </p>
+            <ul class="list-unstyled d-flex flex-column gap-3 mt-3">
+              <li class="d-flex gap-3">
+                <span class="kpi-icon kpi-blue"><i class="bi bi-person"></i></span>
+                <div><strong>Patient Portal</strong><br><span class="text-muted small">Book slots, track tokens, and download prescriptions.</span></div>
+              </li>
+              <li class="d-flex gap-3">
+                <span class="kpi-icon kpi-green"><i class="bi bi-stethoscope"></i></span>
+                <div><strong>Doctor Console</strong><br><span class="text-muted small">Manage your queue, call patients, and issue prescriptions.</span></div>
+              </li>
+              <li class="d-flex gap-3">
+                <span class="kpi-icon kpi-purple"><i class="bi bi-shield-lock"></i></span>
+                <div><strong>Admin Dashboard</strong><br><span class="text-muted small">Monitor doctors, patients, and system-wide appointments.</span></div>
+              </li>
+            </ul>
+          </div>
+          <div class="col-lg-7" data-aos="fade-left">
+            <div class="row g-4">
+              <div class="col-sm-6">
+                <div class="facility-card text-center">
+                  <i class="bi bi-calendar2-week fs-1 text-primary"></i>
+                  <h6 class="fw-bold mt-3 mb-1">Flexible Scheduling</h6>
+                  <p class="text-muted small mb-0">Pick the date and time that suits your routine.</p>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="facility-card text-center">
+                  <i class="bi bi-bell fs-1 text-success"></i>
+                  <h6 class="fw-bold mt-3 mb-1">Clear Notifications</h6>
+                  <p class="text-muted small mb-0">Stay informed on bookings and prescription updates.</p>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="facility-card text-center">
+                  <i class="bi bi-cash-coin fs-1 text-warning"></i>
+                  <h6 class="fw-bold mt-3 mb-1">Transparent Fees</h6>
+                  <p class="text-muted small mb-0">Consultation fees are shown before you confirm.</p>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="facility-card text-center">
+                  <i class="bi bi-lock fs-1 text-info"></i>
+                  <h6 class="fw-bold mt-3 mb-1">Secure Accounts</h6>
+                  <p class="text-muted small mb-0">Role-based access keeps every record protected.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="py-5" style="background-color:#f8fafc;">
+      <div class="container text-center py-3">
+        <h3 class="fw-bold mb-2">Ready to book your next visit?</h3>
+        <p class="text-muted mb-4">Create an account in seconds and choose a slot that works for you.</p>
+        <a href="/login.html?redirect=/book-appointment.html" class="btn btn-primary btn-lg px-4 fw-semibold">
+          <i class="bi bi-calendar-check me-2"></i>Book an Appointment
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="hosp-footer">
+    <div class="container">
+      <div class="row gy-4 mb-4">
+        <div class="col-lg-4">
+          <h5 class="fw-bold text-white mb-3"><i class="bi bi-heart-pulse text-primary me-2"></i>CareQueue</h5>
+          <p class="small text-muted mb-2">A simple platform to discover specialists and stay organized through every appointment.</p>
+          <div class="small text-muted"><i class="bi bi-laptop me-1"></i> Digital appointment management project</div>
+        </div>
+        <div class="col-lg-2 col-6">
+          <h6 class="text-white fw-bold mb-3">Portals</h6>
+          <ul class="list-unstyled small d-flex flex-column gap-2 mb-0">
+            <li><a href="/login.html">Patient Login</a></li>
+            <li><a href="/register.html">New Patient Registration</a></li>
+            <li><a href="/login.html?role=doctor">Doctor Portal</a></li>
+            <li><a href="/login.html?role=admin">CareQueue Admin</a></li>
+          </ul>
+        </div>
+        <div class="col-lg-3 col-6">
+          <h6 class="text-white fw-bold mb-3">Key Departments</h6>
+          <ul class="list-unstyled small d-flex flex-column gap-2 mb-0">
+            <li><a href="/departments.html">Cardiology</a></li>
+            <li><a href="/departments.html">Neurology</a></li>
+            <li><a href="/departments.html">Pediatrics</a></li>
+            <li><a href="/departments.html">Orthopedics</a></li>
+            <li><a href="/departments.html">Dermatology</a></li>
+          </ul>
+        </div>
+        <div class="col-lg-3">
+          <h6 class="text-white fw-bold mb-3">Project details</h6>
+          <div class="small text-muted mb-2"><strong>Platform:</strong> Appointment and queue management</div>
+          <div class="small text-muted"><strong>Project:</strong> Appointment management simulator</div>
+        </div>
+      </div>
+
+      <div class="border-top border-secondary pt-3 text-center small text-muted">
+        © 2026 CareQueue. A healthcare appointment management project.
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/vendor/aos/aos.js"></script>
+  <script src="/js/app.js"></script>
+  <script>
+    AOS.init({ duration: 800, once: true });
+  </script>
+  
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>My Prescriptions | CareQueue</title>
+  
+  <link href="/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&family=Sora:wght@600;700&display=swap" rel="stylesheet">
+  <link href="/css/portal.css" rel="stylesheet">
+  <style>
+    body { font-family: Manrope, sans-serif; background: linear-gradient(180deg,#f3f8f8,#eef3f5); }
+    .navbar { background: linear-gradient(110deg,#153744,#0b7f82)!important; }
+    h3 { font-family: Sora, Manrope, sans-serif; }
+  </style>
+</head>
+
+<body>
+
+  <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+    <div class="container">
+      <a class="navbar-brand fw-bold" href="/patient-dashboard.html">
+        <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
+      </a>
+    </div>
+  </nav>
+
+  <div class="container py-5">
+    <h3 class="fw-bold mb-4">Digital prescriptions (Rx)</h3>
+    <div id="prescriptions-list" class="row g-4">
+      <!-- Loaded via JS -->
+    </div>
+  </div>
+
+  <script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", loadPrescriptions);
+
+    async function loadPrescriptions() {
+      const res = await fetch("/api/patient/prescriptions");
+      const prescriptions = await res.json();
+      
+      const container = document.getElementById("prescriptions-list");
+      if (prescriptions.length === 0) {
+        container.innerHTML = '<div class="col-12 text-center py-5 text-muted"><i class="bi bi-file-earmark-medical fs-1 d-block mb-3"></i>No digital prescriptions found yet.</div>';
+        return;
+      }
+
+      container.innerHTML = prescriptions.map(rx => `
+        <div class="col-md-6">
+          <div class="card border-0 shadow-sm rounded-4 p-4">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+              <div>
+                <h5 class="fw-bold mb-0">${rx.doctor_name}</h5>
+                <small class="text-primary">${rx.specialty}</small>
+              </div>
+              <div class="text-end">
+                <div class="small fw-bold text-dark">${rx.appointment_date}</div>
+                <div class="badge bg-success-subtle text-success">${rx.token_number}</div>
+              </div>
+            </div>
+            <div class="bg-light p-3 rounded-3 mb-3">
+              <h6 class="fw-bold small text-uppercase text-muted">Doctor's Notes</h6>
+              <p class="small mb-0">${rx.doctor_notes || 'No specific notes provided.'}</p>
+            </div>
+            <div class="mb-3">
+              <h6 class="fw-bold small text-uppercase text-muted">Medications</h6>
+              <div class="p-2 border rounded bg-white small">
+                ${formatPrescription(rx.prescription)}
+              </div>
+            </div>
+            <button class="btn btn-outline-primary btn-sm w-100" onclick="window.print()"><i class="bi bi-printer me-1"></i> Print Prescription</button>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function formatPrescription(rx) {
+      if (!rx) return "No medications prescribed.";
+      try {
+        const list = JSON.parse(rx);
+        if (Array.isArray(list)) {
+          return list.map(m => `• ${m.name} - ${m.dosage} (${m.duration})<br>`).join("");
+        }
+        return rx; // Fallback if it's just a string
+      } catch(e) {
+        return rx;
+      }
+    }
+  </script>
+</body>
+</html>

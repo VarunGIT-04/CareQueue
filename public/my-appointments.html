@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>My Appointments | CareQueue</title>
+  
+  <link href="/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&family=Sora:wght@600;700&display=swap" rel="stylesheet">
+  <link href="/css/portal.css" rel="stylesheet">
+  <style>
+    body { font-family: Manrope, sans-serif; background: linear-gradient(180deg,#f3f8f8,#eef3f5); }
+    .navbar { background: linear-gradient(110deg,#153744,#0b7f82)!important; }
+    h3 { font-family: Sora, Manrope, sans-serif; }
+  </style>
+</head>
+
+<body>
+
+  <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+    <div class="container">
+      <a class="navbar-brand fw-bold" href="/patient-dashboard.html">
+        <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
+      </a>
+    </div>
+  </nav>
+
+  <div class="container py-5">
+    <div class="row">
+      <div class="col-12">
+        <div class="card border-0 shadow-sm rounded-4 p-4">
+          <h3 class="fw-bold mb-4">Your appointment history</h3>
+          <div class="table-responsive">
+            <table class="table table-hover align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th>Token</th>
+                  <th>Doctor</th>
+                  <th>Specialty</th>
+                  <th>Date & Time</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="appointments-list">
+                <!-- Loaded via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", loadAppointments);
+
+    async function loadAppointments() {
+      const res = await fetch("/api/patient/appointments");
+      const appointments = await res.json();
+      
+      const tbody = document.getElementById("appointments-list");
+      if (appointments.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4">No appointments found.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = appointments.map(apt => `
+        <tr>
+          <td><span class="badge bg-primary-subtle text-primary">${apt.token_number}</span></td>
+          <td><h6 class="mb-0 fw-bold">${apt.doctor_name}</h6></td>
+          <td><small>${apt.specialty}</small></td>
+          <td>
+            <div class="fw-bold">${apt.appointment_date}</div>
+            <small class="text-muted">${formatTime12h(apt.appointment_time)}</small>
+          </td>
+          <td><span class="badge ${getStatusClass(apt.status)}">${apt.status}</span></td>
+          <td>
+            ${apt.status === 'Booked' ? `<button class="btn btn-sm btn-outline-danger" onclick="cancelApt(${apt.id})">Cancel</button>` : '-'}
+          </td>
+        </tr>
+      `).join("");
+    }
+
+    async function cancelApt(id) {
+      if (!confirm("Are you sure you want to cancel this appointment?")) return;
+      const res = await fetch(`/api/patient/appointments/${id}/cancel`, { method: "POST" });
+      if (res.ok) {
+        alert("Appointment cancelled.");
+        loadAppointments();
+      }
+    }
+
+    function getStatusClass(status) {
+      switch(status) {
+        case 'Booked': return 'bg-primary-subtle text-primary';
+        case 'Completed': return 'bg-success-subtle text-success';
+        case 'Cancelled': return 'bg-danger-subtle text-danger';
+        default: return 'bg-secondary-subtle text-secondary';
+      }
+    }
+
+    function formatTime12h(timeStr) {
+      if (!timeStr) return "";
+      const [h, m] = timeStr.split(":");
+      let hours = parseInt(h);
+      const ampm = hours >= 12 ? "PM" : "AM";
+      hours = hours % 12 || 12;
+      return `${String(hours).padStart(2, "0")}:${m} ${ampm}`;
+    }
+  </script>
+</body>
+</html>

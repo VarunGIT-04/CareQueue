@@ -1,0 +1,12 @@
+node_modules/
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+
+CareQueue-project.zip
+report_render/
+build_project_report.py
+CareQueue_MCA_Project_Report.docx
+CareQueue_MCA_Project_Report.pdf

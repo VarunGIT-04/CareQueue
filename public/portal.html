@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Patient & Clinic Portal | Doctor Appointment Simulator</title>
+  <meta name="description" content="Dynamic healthcare and doctor appointment simulation portal.">
+
+  <!-- Vendor CSS -->
+  <link href="/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+
+  <!-- Custom Portal CSS -->
+  <link href="/css/portal.css" rel="stylesheet">
+</head>
+
+<body class="portal-body">
+
+  <!-- Top Navigation Bar -->
+  <nav class="portal-navbar sticky-top py-2 px-3 px-lg-4">
+    <div class="container-fluid d-flex align-items-center justify-content-between">
+      
+      <!-- Logo & Live Status -->
+      <div class="d-flex align-items-center gap-3">
+        <a href="/" class="portal-brand">
+          <i class="bi bi-heart-pulse-fill text-primary"></i>
+          <span>MediSim Portal</span>
+        </a>
+        <span class="live-badge d-none d-md-inline-flex">
+          <span class="live-dot"></span>
+          <span>Live Simulator</span>
+        </span>
+      </div>
+
+      <!-- Controls & User Actions -->
+      <div class="d-flex align-items-center gap-2 gap-md-3">
+        
+        <!-- Mode Switcher Pill (Patient vs Doctor Simulator) -->
+        <div class="btn-group btn-group-sm" role="group" aria-label="Simulator role switcher">
+          <button type="button" class="btn btn-primary" id="btn-mode-patient" onclick="switchSimulatorRole('patient')">
+            <i class="bi bi-person"></i> Patient View
+          </button>
+          <button type="button" class="btn btn-outline-primary" id="btn-mode-doctor" onclick="switchSimulatorRole('doctor')">
+            <i class="bi bi-hospital"></i> Doctor / Clinic Mode
+          </button>
+        </div>
+
+        <!-- Notification Bell Dropdown -->
+        <div class="dropdown">
+          <button class="btn btn-light position-relative rounded-circle p-2" type="button" id="notifDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-bell fs-5 text-secondary"></i>
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none" id="notif-badge">
+              0
+            </span>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end shadow-sm notif-dropdown-menu" aria-labelledby="notifDropdown" id="notif-menu">
+            <li class="dropdown-header d-flex justify-content-between align-items-center">
+              <span>Notifications</span>
+              <button class="btn btn-link btn-sm p-0 text-decoration-none" onclick="markAllNotificationsRead()">Mark all read</button>
+            </li>
+            <li><hr class="dropdown-divider my-1"></li>
+            <div id="notif-list-container">
+              <li class="p-3 text-center text-muted small">Loading notifications…</li>
+            </div>
+          </ul>
+        </div>
+
+        <!-- User Profile Dropdown -->
+        <div class="dropdown">
+          <button class="btn btn-light d-flex align-items-center gap-2 p-1 pe-2 rounded-pill border" type="button" data-bs-toggle="dropdown">
+            <span class="user-avatar" id="nav-user-avatar">U</span>
+            <span class="fw-semibold small d-none d-sm-inline" id="nav-user-name">Loading…</span>
+            <i class="bi bi-chevron-down text-muted small"></i>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+            <li><h6 class="dropdown-header" id="nav-user-email">user@example.com</h6></li>
+            <li><a class="dropdown-item" href="#tab-profile" onclick="activateTab('tab-profile')"><i class="bi bi-person me-2"></i>My Profile</a></li>
+            <li><a class="dropdown-item" href="#tab-records" onclick="activateTab('tab-records')"><i class="bi bi-file-earmark-medical me-2"></i>Medical Records</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="/"><i class="bi bi-house me-2"></i>Home Page</a></li>
+            <li><a class="dropdown-item text-danger" href="javascript:void(0)" id="logout-button"><i class="bi bi-box-arrow-right me-2"></i>Log Out</a></li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Container -->
+  <div class="container-fluid py-4 px-3 px-lg-4">
+
+    <!-- Role Simulator Alert Banner -->
+    <div class="alert alert-info border-0 shadow-sm d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4" id="role-banner">
+      <div class="d-flex align-items-center gap-2">
+        <i class="bi bi-info-circle-fill fs-5 text-primary"></i>
+        <div>
+          <strong id="role-banner-title">Patient Portal Mode Active:</strong>
+          <span id="role-banner-desc">You are viewing the patient experience (book slots, view prescriptions, join consultations).</span>
+        </div>
+      </div>
+      <button class="btn btn-sm btn-outline-primary" id="role-banner-action" onclick="toggleRoleBannerAction()">
+        <i class="bi bi-arrow-repeat me-1"></i> Switch to Doctor Mode
+      </button>
+    </div>
+
+    <!-- Navigation Pills / Tabs -->
+    <ul class="nav portal-tabs nav-pills mb-4 flex-wrap gap-2" id="portalTabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="tab-dashboard-btn" data-bs-toggle="pill" data-bs-target="#tab-dashboard" type="button" role="tab">
+          <i class="bi bi-speedometer2"></i> Dashboard
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="tab-book-btn" data-bs-toggle="pill" data-bs-target="#tab-book" type="button" role="tab">
+          <i class="bi bi-calendar-plus"></i> Book Appointment
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="tab-appointments-btn" data-bs-toggle="pill" data-bs-target="#tab-appointments" type="button" role="tab">
+          <i class="bi bi-calendar2-check"></i> My Appointments
+          <span class="badge bg-light text-primary ms-1" id="badge-appointments-count">0</span>
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="tab-records-btn" data-bs-toggle="pill" data-bs-target="#tab-records" type="button" role="tab">
+          <i class="bi bi-file-earmark-medical"></i> Prescriptions & Rx
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="tab-doctors-btn" data-bs-toggle="pill" data-bs-target="#tab-doctors" type="button" role="tab">
+          <i class="bi bi-people"></i> Find Doctors
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="tab-video-btn" data-bs-toggle="pill" data-bs-target="#tab-video" type="button" role="tab">
+          <i class="bi bi-camera-video"></i> Telemedicine Room
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="tab-profile-btn" data-bs-toggle="pill" data-bs-target="#tab-profile" type="button" role="tab">
+          <i class="bi bi-person-badge"></i> Health Profile
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link text-warning-emphasis" id="tab-doctor-simulator-btn" data-bs-toggle="pill" data-bs-target="#tab-doctor-simulator" type="button" role="tab">
+          <i class="bi bi-hospital"></i> Clinic Simulator (Doctor View)
+        </button>
+      </li>
+    </ul>
+
+    <!-- Tab Contents -->
+    <div class="tab-content" id="portalTabsContent">
+
+      <!-- ========================================== -->
+      <!-- TAB 1: DASHBOARD OVERVIEW -->
+      <!-- ========================================== -->
+      <div class="tab-pane fade show active" id="tab-dashboard" role="tabpanel">
+        
+        <!-- Welcome banner -->
+        <div class="portal-card mb-4 bg-primary text-white position-relative overflow-hidden" style="background: linear-gradient(135deg, #1977cc, #0c4d87) !important;">
+          <div class="row align-items-center">
+            <div class="col-lg-8">
+              <h2 class="h3 fw-bold mb-2">Hello, <span id="dash-greeting-name">Patient</span>! 👋</h2>
+              <p class="mb-3 opacity-90">Welcome to your health simulator dashboard. You can schedule in-person or video consultations, view digital prescriptions, and test the entire clinical workflow.</p>
+              <div class="d-flex flex-wrap gap-2">
+                <button class="btn btn-light text-primary fw-semibold" onclick="activateTab('tab-book')">
+                  <i class="bi bi-calendar-plus me-1"></i> Book New Appointment
+                </button>
+                <button class="btn btn-outline-light" onclick="activateTab('tab-doctors')">
+                  <i class="bi bi-search me-1"></i> Explore Specialists
+                </button>
+              </div>
+            </div>
+            <div class="col-lg-4 text-center text-lg-end mt-3 mt-lg-0 d-none d-lg-block">
+              <i class="bi bi-heart-pulse text-white opacity-25" style="font-size: 7rem;"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4 Metric Cards -->
+        <div class="row g-3 mb-4">
+          <div class="col-sm-6 col-xl-3">
+            <div class="portal-stat-card">
+              <div class="stat-icon stat-blue">
+                <i class="bi bi-calendar-event"></i>
+              </div>
+              <div>
+                <h3 class="h4 mb-0 fw-bold" id="stat-upcoming">0</h3>
+                <small class="text-muted">Upcoming Visits</small>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6 col-xl-3">
+            <div class="portal-stat-card">
+              <div class="stat-icon stat-green">
+                <i class="bi bi-check2-circle"></i>
+              </div>
+              <div>
+                <h3 class="h4 mb-0 fw-bold" id="stat-completed">0</h3>
+                <small class="text-muted">Completed Visits</small>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6 col-xl-3">
+            <div class="portal-stat-card">
+              <div class="stat-icon stat-purple">
+                <i class="bi bi-file-earmark-medical"></i>
+              </div>
+              <div>
+                <h3 class="h4 mb-0 fw-bold" id="stat-prescriptions">0</h3>
+                <small class="text-muted">Prescriptions (Rx)</small>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6 col-xl-3">
+            <div class="portal-stat-card">
+              <div class="stat-icon stat-orange">
+                <i class="bi bi-shield-check"></i>
+              </div>
+              <div>
+                <h3 class="h4 mb-0 fw-bold" id="stat-profile-completeness">80%</h3>
+                <small class="text-muted">Profile Complete</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row g-4">
+          <!-- Next Consultation Spotlight Card -->
+          <div class="col-lg-7">
+            <div class="portal-card h-100">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="h5 mb-0 fw-bold"><i class="bi bi-stopwatch text-primary me-2"></i>Next Scheduled Consultation</h4>
+                <span class="badge bg-primary-subtle text-primary" id="dash-next-badge">Scheduled</span>
+              </div>
+
+              <div id="dash-next-appointment-content">
+                <div class="text-center py-4 text-muted">
+                  <i class="bi bi-calendar-x fs-1 opacity-50 d-block mb-2"></i>
+                  <p class="mb-2">No upcoming appointment scheduled right now.</p>
+                  <button class="btn btn-sm btn-primary" onclick="activateTab('tab-book')">Book Your Next Visit</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Shortcuts & Health Overview -->
+          <div class="col-lg-5">
+            <div class="portal-card h-100">
+              <h4 class="h5 mb-3 fw-bold"><i class="bi bi-lightning-charge text-warning me-2"></i>Quick Health Actions</h4>
+              
+              <div class="list-group list-group-flush mb-3">
+                <a href="javascript:void(0)" onclick="activateTab('tab-book')" class="list-group-item list-group-item-action d-flex align-items-center justify-content-between py-3">
+                  <div class="d-flex align-items-center gap-3">
+                    <div class="stat-icon stat-blue" style="width:40px; height:40px; font-size:1.1rem;"><i class="bi bi-plus-lg"></i></div>
+                    <div>
+                      <h6 class="mb-0 fw-semibold">Book an Appointment</h6>
+                      <small class="text-muted">Select doctor, date and custom slot</small>
+                    </div>
+                  </div>
+                  <i class="bi bi-chevron-right text-muted"></i>
+                </a>
+
+                <a href="javascript:void(0)" onclick="activateTab('tab-records')" class="list-group-item list-group-item-action d-flex align-items-center justify-content-between py-3">
+                  <div class="d-flex align-items-center gap-3">
+                    <div class="stat-icon stat-purple" style="width:40px; height:40px; font-size:1.1rem;"><i class="bi bi-receipt"></i></div>
+                    <div>
+                      <h6 class="mb-0 fw-semibold">Prescriptions & Medical Records</h6>
+                      <small class="text-muted">Download or print digital medication slips</small>
+                    </div>
+                  </div>
+                  <i class="bi bi-chevron-right text-muted"></i>
+                </a>
+
+                <a href="javascript:void(0)" onclick="activateTab('tab-video')" class="list-group-item list-group-item-action d-flex align-items-center justify-content-between py-3">
+                  <div class="d-flex align-items-center gap-3">
+                    <div class="stat-icon stat-green" style="width:40px; height:40px; font-size:1.1rem;"><i class="bi bi-camera-video"></i></div>
+                    <div>
+                      <h6 class="mb-0 fw-semibold">Virtual Telemedicine Room</h6>
+                      <small class="text-muted">Interactive video consultation simulator</small>
+                    </div>
+                  </div>
+                  <i class="bi bi-chevron-right text-muted"></i>
+                </a>
+              </div>
+
+              <div class="p-3 bg-light rounded-3">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                  <small class="fw-semibold">Patient Profile Completeness</small>
+                  <small class="text-primary fw-bold" id="dash-profile-pct">80%</small>
+                </div>
+                <div class="progress" style="height: 6px;">
+                  <div class="progress-bar bg-primary" id="dash-profile-bar" role="progressbar" style="width: 80%"></div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ========================================== -->
+      <!-- TAB 2: DYNAMIC BOOKING WIZARD -->
+      <!-- ========================================== -->
+      <div class="tab-pane fade" id="tab-book" role="tabpanel">
+        <div class="row g-4">
+          
+          <div class="col-lg-7">
+            <div class="portal-card">
+              <h3 class="h4 fw-bold mb-1">Schedule an Appointment</h3>
+              <p class="text-muted mb-4">Choose your specialist, date, and live available time slot.</p>
+
+              <!-- Step 1: Specialty Filter Pills -->
+              <div class="mb-3">
+                <label class="form-label fw-semibold">1. Filter by Specialty</label>
+                <div class="d-flex flex-wrap gap-2" id="booking-specialty-filter">
+                  <button type="button" class="btn btn-sm btn-primary active-specialty" onclick="filterDoctorsBySpecialty('All', this)">All Specialties</button>
+                  <button type="button" class="btn btn-sm btn-outline-secondary" onclick="filterDoctorsBySpecialty('Cardiologist', this)">Cardiology</button>
+                  <button type="button" class="btn btn-sm btn-outline-secondary" onclick="filterDoctorsBySpecialty('Dermatologist', this)">Dermatology</button>
+                  <button type="button" class="btn btn-sm btn-outline-secondary" onclick="filterDoctorsBySpecialty('General Physician', this)">General Medicine</button>
+                  <button type="button" class="btn btn-sm btn-outline-secondary" onclick="filterDoctorsBySpecialty('Pediatrician', this)">Pediatrics</button>
+                  <button type="button" class="btn btn-sm btn-outline-secondary" onclick="filterDoctorsBySpecialty('Neurologist', this)">Neurology</button>
+                  <button type="button" class="btn btn-sm btn-outline-secondary" onclick="filterDoctorsBySpecialty('Orthopedic Surgeon', this)">Orthopedics</button>
+                </div>
+              </div>
+
+              <!-- Step 2: Choose Doctor -->
+              <div class="mb-3">
+                <label class="form-label fw-semibold" for="book-doctor-select">2. Select Doctor</label>
+                <select class="form-select" id="book-doctor-select" required onchange="onDoctorSelected()">
+                  <option value="">Choose a doctor…</option>
+                </select>
+              </div>
+
+              <!-- Selected Doctor Highlight Preview -->
+              <div id="selected-doctor-preview" class="p-3 bg-light rounded-3 mb-3 d-none">
+                <div class="d-flex align-items-center gap-3">
+                  <img src="/assets/img/doctors/doctors-1.jpg" id="preview-doc-img" class="rounded-circle" style="width: 55px; height: 55px; object-fit: cover;" alt="">
+                  <div>
+                    <h6 class="mb-0 fw-bold" id="preview-doc-name">Dr. Ananya Rao</h6>
+                    <small class="text-primary fw-semibold" id="preview-doc-specialty">General Physician</small>
+                    <div class="small text-muted" id="preview-doc-days">Available: Monday, Wednesday, Friday</div>
+                  </div>
+                  <div class="ms-auto text-end">
+                    <span class="badge bg-success-subtle text-success fs-6" id="preview-doc-fee">₹500</span>
+                    <div class="text-warning small"><i class="bi bi-star-fill"></i> <span id="preview-doc-rating">4.9</span></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Step 3: Consultation Mode -->
+              <div class="mb-3">
+                <label class="form-label fw-semibold">3. Consultation Type</label>
+                <div class="row g-2">
+                  <div class="col-sm-6">
+                    <div class="type-picker-box active" id="type-box-inperson" onclick="selectConsultationType('In-Person')">
+                      <i class="bi bi-hospital fs-3 text-primary"></i>
+                      <div>
+                        <strong class="d-block small">In-Person Visit</strong>
+                        <small class="text-muted">Visit clinic in-person</small>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-sm-6">
+                    <div class="type-picker-box" id="type-box-video" onclick="selectConsultationType('Video Consultation')">
+                      <i class="bi bi-camera-video fs-3 text-info"></i>
+                      <div>
+                        <strong class="d-block small">Virtual Video Consultation</strong>
+                        <small class="text-muted">Join from mobile or laptop</small>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Step 4: Date Picker -->
+              <div class="mb-3">
+                <label class="form-label fw-semibold" for="book-date-input">4. Choose Date</label>
+                <input type="date" class="form-control" id="book-date-input" required onchange="onDateChanged()">
+                <small class="form-text text-muted" id="book-date-helper">Select a date falling on the doctor's available days.</small>
+              </div>
+
+              <!-- Step 5: Interactive Time Slots Grid -->
+              <div class="mb-4">
+                <label class="form-label fw-semibold d-flex justify-content-between align-items-center">
+                  <span>5. Select Time Slot</span>
+                  <span class="small text-muted" id="slots-count-label">Select doctor and date to view slots</span>
+                </label>
+                <div id="slots-container" class="slot-grid">
+                  <div class="text-muted small py-3 col-12 text-center bg-light rounded">
+                    Please pick a doctor and date first to load real-time available slots.
+                  </div>
+                </div>
+                <input type="hidden" id="book-selected-time" required>
+              </div>
+
+              <!-- Step 6: Reason for Visit & Common Symptoms -->
+              <div class="mb-4">
+                <label class="form-label fw-semibold" for="book-reason">6. Reason / Symptoms (Optional)</label>
+                <div class="d-flex flex-wrap gap-1 mb-2">
+                  <span class="badge bg-light text-dark border pointer-badge" onclick="appendReason('Routine Health Checkup')">+ Health Checkup</span>
+                  <span class="badge bg-light text-dark border pointer-badge" onclick="appendReason('Fever & Bodyache')">+ Fever</span>
+                  <span class="badge bg-light text-dark border pointer-badge" onclick="appendReason('Cough & Cold')">+ Cough</span>
+                  <span class="badge bg-light text-dark border pointer-badge" onclick="appendReason('Hypertension follow-up')">+ Blood Pressure</span>
+                  <span class="badge bg-light text-dark border pointer-badge" onclick="appendReason('Skin allergy or rash')">+ Skin Rash</span>
+                </div>
+                <textarea class="form-control" id="book-reason" rows="2" maxlength="500" placeholder="Describe symptoms or reasons for consultation…"></textarea>
+              </div>
+
+              <!-- Submit Button -->
+              <div class="d-grid">
+                <button type="button" class="btn btn-primary btn-lg" id="btn-submit-booking" onclick="submitAppointmentBooking()">
+                  <i class="bi bi-check-circle me-1"></i> Confirm Appointment Booking
+                </button>
+              </div>
+
+              <div id="booking-alert-box" class="mt-3"></div>
+            </div>
+          </div>
+
+          <!-- Right Column: Booking Guidelines & Doctor Details -->
+          <div class="col-lg-5">
+            <div class="portal-card mb-4">
+              <h4 class="h5 fw-bold mb-3"><i class="bi bi-shield-check text-success me-2"></i>Booking Policies</h4>
+              <ul class="text-muted small ps-3 mb-0 d-flex flex-column gap-2">
+                <li><strong>Dynamic Slot Conflict Prevention:</strong> Slots already occupied by other simulator appointments cannot be double-booked.</li>
+                <li><strong>Instant Confirmation:</strong> Booking creates a simulated confirmation token with digital appointment pass.</li>
+                <li><strong>Free Rescheduling:</strong> You can reschedule or cancel directly from the "My Appointments" tab.</li>
+                <li><strong>Prescription Issuance:</strong> Once doctor completes the visit, digital Rx with medication advice appears in your Medical Records.</li>
+              </ul>
+            </div>
+
+            <div class="portal-card" id="booking-doctor-detail-card">
+              <h4 class="h5 fw-bold mb-3"><i class="bi bi-person-lines-fill text-primary me-2"></i>Doctor Details</h4>
+              <p class="text-muted small">Select any doctor from the list to view their experience, bio, and verified credentials.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ========================================== -->
+      <!-- TAB 3: MY APPOINTMENTS -->
+      <!-- ========================================== -->
+      <div class="tab-pane fade" id="tab-appointments" role="tabpanel">
+        <div class="portal-card">
+          
+          <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+            <div>
+              <h3 class="h4 fw-bold mb-1">My Appointments</h3>
+              <p class="text-muted mb-0">Track, reschedule, cancel, or download receipts for your bookings.</p>
+            </div>
+            
+            <!-- Filter Pills -->
+            <div class="btn-group btn-group-sm">
+              <button type="button" class="btn btn-outline-primary active" id="btn-filter-all" onclick="filterAppointments('All')">All</button>
+              <button type="button" class="btn btn-outline-primary" id="btn-filter-booked" onclick="filterAppointments('Booked')">Upcoming</button>
+              <button type="button" class="btn btn-outline-primary" id="btn-filter-completed" onclick="filterAppointments('Completed')">Completed</button>
+              <button type="button" class="btn btn-outline-primary" id="btn-filter-cancelled" onclick="filterAppointments('Cancelled')">Cancelled</button>
+            </div>
+          </div>
+
+          <!-- Appointments List Container -->
+          <div id="appointments-container" class="d-flex flex-column gap-3">
+            <div class="text-center py-5 text-muted">Loading appointments…</div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ========================================== -->
+      <!-- TAB 4: PRESCRIPTIONS & MEDICAL RECORDS -->
+      <!-- ========================================== -->
+      <div class="tab-pane fade" id="tab-records" role="tabpanel">
+        <div class="portal-card">
+          <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+            <div>
+              <h3 class="h4 fw-bold mb-1">Prescriptions & Medical Records (Rx)</h3>
+              <p class="text-muted mb-0">Official consultation notes and medication slips issued by attending specialists.</p>
+            </div>
+          </div>
+
+          <div id="prescriptions-container" class="row g-4">
+            <div class="col-12 text-center py-5 text-muted">Loading prescriptions…</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========================================== -->
+      <!-- TAB 5: FIND DOCTORS DIRECTORY -->
+      <!-- ========================================== -->
+      <div class="tab-pane fade" id="tab-doctors" role="tabpanel">
+        <div class="portal-card">
+          <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+            <div>
+              <h3 class="h4 fw-bold mb-1">Specialist Doctor Directory</h3>
+              <p class="text-muted mb-0">Browse certified physicians, experience details, ratings, and consultation fees.</p>
+            </div>
+            <div class="d-flex gap-2">
+              <input type="text" class="form-control form-control-sm" id="directory-search" placeholder="Search doctor or specialty…" oninput="onSearchDoctors(this.value)">
+            </div>
+          </div>
+
+          <!-- Doctor Cards Grid -->
+          <div class="row g-4" id="doctors-directory-container">
+            <div class="col-12 text-center py-5 text-muted">Loading doctor directory…</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========================================== -->
+      <!-- TAB 6: TELEMEDICINE VIRTUAL CONSULTATION ROOM -->
+      <!-- ========================================== -->
+      <div class="tab-pane fade" id="tab-video" role="tabpanel">
+        <div class="portal-card p-0 overflow-hidden">
+          
+          <div class="p-3 bg-dark text-white d-flex justify-content-between align-items-center border-bottom border-secondary">
+            <div class="d-flex align-items-center gap-2">
+              <span class="live-dot"></span>
+              <strong class="small">MediSim Telemedicine Virtual Room</strong>
+              <span class="badge bg-success small">Encrypted (Simulated)</span>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+              <span class="small text-light" id="call-timer"><i class="bi bi-clock me-1"></i>00:03:45</span>
+            </div>
+          </div>
+
+          <div class="row g-0">
+            <!-- Left Stage: Video Simulator -->
+            <div class="col-lg-8">
+              <div class="video-room-container">
+                <div class="video-stage">
+                  
+                  <!-- Remote Doctor Stream Simulation -->
+                  <div class="doctor-remote-feed text-center">
+                    <img src="/assets/img/doctors/doctors-2.jpg" id="call-doctor-img" class="doctor-call-avatar mb-3" alt="Doctor stream">
+                    <h5 class="fw-bold text-white mb-0" id="call-doctor-name">Dr. Kabir Mehta</h5>
+                    <small class="text-info fw-semibold" id="call-doctor-spec">Cardiologist (Consultant)</small>
+                    <div class="mt-2">
+                      <span class="badge bg-secondary opacity-75 small"><i class="bi bi-soundwave text-info"></i> Audio Active</span>
+                    </div>
+                  </div>
+
+                  <!-- Patient PIP Webcam Preview -->
+                  <div class="user-pip-feed" id="user-pip-container">
+                    <i class="bi bi-person-video fs-1 text-secondary" id="user-pip-avatar"></i>
+                    <small class="text-white opacity-75 mt-1" style="font-size: 0.7rem;">You (Patient)</small>
+                  </div>
+
+                </div>
+
+                <!-- Call Control Bar -->
+                <div class="call-controls-bar">
+                  <button type="button" class="ctrl-btn" id="ctrl-mic" title="Toggle Mic" onclick="toggleCallControl('mic')">
+                    <i class="bi bi-mic-fill"></i>
+                  </button>
+                  <button type="button" class="ctrl-btn" id="ctrl-cam" title="Toggle Camera" onclick="toggleCallControl('cam')">
+                    <i class="bi bi-camera-video-fill"></i>
+                  </button>
+                  <button type="button" class="ctrl-btn" id="ctrl-vitals" title="Show Vitals" onclick="toggleCallControl('vitals')">
+                    <i class="bi bi-activity"></i>
+                  </button>
+                  <button type="button" class="ctrl-btn end-call" title="End Consultation" onclick="endSimulatedCall()">
+                    <i class="bi bi-telephone-x-fill"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Stage: Consultation Chat & HUD -->
+            <div class="col-lg-4 border-start p-3 bg-white d-flex flex-column justify-content-between" style="min-height: 480px;">
+              <div>
+                <h6 class="fw-bold mb-2 pb-2 border-bottom"><i class="bi bi-chat-text text-primary me-2"></i>Consultation Live Chat</h6>
+                <div class="call-chat-box mb-3" id="call-chat-messages">
+                  <div class="chat-bubble doctor">
+                    <strong>Dr. Kabir:</strong> Hello! Can you hear me clearly? How are you feeling today?
+                  </div>
+                  <div class="chat-bubble patient">
+                    <strong>You:</strong> Hello doctor, yes I can hear you well. I was having mild fatigue.
+                  </div>
+                  <div class="chat-bubble doctor">
+                    <strong>Dr. Kabir:</strong> Let us review your recent readings and lifestyle routine.
+                  </div>
+                </div>
+              </div>
+
+              <!-- Chat Input -->
+              <div>
+                <!-- Simulated Patient Vitals Bar -->
+                <div class="p-2 mb-2 bg-light rounded small border d-flex justify-content-around text-center" id="hud-vitals">
+                  <div><strong class="text-danger d-block">❤️ 74</strong><span class="text-muted" style="font-size: 0.72rem;">BPM</span></div>
+                  <div><strong class="text-primary d-block">🩸 124/82</strong><span class="text-muted" style="font-size: 0.72rem;">mmHg</span></div>
+                  <div><strong class="text-success d-block">🫁 99%</strong><span class="text-muted" style="font-size: 0.72rem;">SpO2</span></div>
+                </div>
+
+                <div class="input-group">
+                  <input type="text" class="form-control" id="call-chat-input" placeholder="Type message to doctor…" onkeydown="if(event.key==='Enter') sendCallChatMessage()">
+                  <button class="btn btn-primary" type="button" onclick="sendCallChatMessage()"><i class="bi bi-send"></i></button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ========================================== -->
+      <!-- TAB 7: HEALTH PROFILE -->
+      <!-- ========================================== -->
+      <div class="tab-pane fade" id="tab-profile" role="tabpanel">
+        <div class="row g-4">
+          <div class="col-lg-8">
+            <div class="portal-card">
+              <h3 class="h4 fw-bold mb-1">Patient Health Profile</h3>
+              <p class="text-muted mb-4">Manage personal health metrics, blood group, allergies, and emergency contact.</p>
+
+              <form id="profile-form" onsubmit="saveUserProfile(event)">
+                <div class="row g-3 mb-3">
+                  <div class="col-md-6">
+                    <label class="form-label fw-semibold" for="profile-name">Full Name</label>
+                    <input type="text" class="form-control" id="profile-name" required>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label fw-semibold" for="profile-email">Email Address</label>
+                    <input type="email" class="form-control" id="profile-email" disabled readonly>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label fw-semibold" for="profile-phone">Phone Number</label>
+                    <input type="tel" class="form-control" id="profile-phone" placeholder="+91 98765 43210">
+                  </div>
+                  <div class="col-md-3">
+                    <label class="form-label fw-semibold" for="profile-age">Age</label>
+                    <input type="number" class="form-control" id="profile-age" min="1" max="120" placeholder="e.g. 25">
+                  </div>
+                  <div class="col-md-3">
+                    <label class="form-label fw-semibold" for="profile-gender">Gender</label>
+                    <select class="form-select" id="profile-gender">
+                      <option value="">Select</option>
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label fw-semibold" for="profile-blood">Blood Group</label>
+                    <select class="form-select" id="profile-blood">
+                      <option value="">Choose blood group</option>
+                      <option value="A+">A+</option>
+                      <option value="A-">A-</option>
+                      <option value="B+">B+</option>
+                      <option value="B-">B-</option>
+                      <option value="O+">O+</option>
+                      <option value="O-">O-</option>
+                      <option value="AB+">AB+</option>
+                      <option value="AB-">AB-</option>
+                    </select>
+                  </div>
+                  <div class="col-12">
+                    <label class="form-label fw-semibold" for="profile-allergies">Known Allergies / Medical Notes</label>
+                    <textarea class="form-control" id="profile-allergies" rows="3" placeholder="e.g. Penicillin, Peanuts, Asthma, Dust allergy…"></textarea>
+                  </div>
+                </div>
+
+                <div class="d-flex align-items-center gap-2">
+                  <button type="submit" class="btn btn-primary" id="btn-save-profile">
+                    <i class="bi bi-save me-1"></i> Save Changes
+                  </button>
+                  <span id="profile-save-message" class="small"></span>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <div class="col-lg-4">
+            <div class="portal-card">
+              <h5 class="fw-bold mb-3"><i class="bi bi-shield-lock text-primary me-2"></i>Patient Summary</h5>
+              <div class="text-center py-3">
+                <span class="user-avatar mb-3" style="width: 72px; height: 72px; font-size: 1.8rem;" id="profile-big-avatar">U</span>
+                <h5 class="fw-bold mb-0" id="profile-card-name">User Name</h5>
+                <small class="text-muted" id="profile-card-email">email@example.com</small>
+              </div>
+
+              <hr>
+
+              <div class="d-flex flex-column gap-2 small">
+                <div class="d-flex justify-content-between">
+                  <span class="text-muted">Account Role:</span>
+                  <span class="badge bg-primary-subtle text-primary">Patient</span>
+                </div>
+                <div class="d-flex justify-content-between">
+                  <span class="text-muted">Blood Group:</span>
+                  <span class="fw-semibold text-danger" id="profile-card-blood">O+</span>
+                </div>
+                <div class="d-flex justify-content-between">
+                  <span class="text-muted">Phone:</span>
+                  <span class="fw-semibold" id="profile-card-phone">+91 98765 43210</span>
+                </div>
+                <div class="d-flex justify-content-between">
+                  <span class="text-muted">Registered On:</span>
+                  <span class="text-muted" id="profile-card-date">2026</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========================================== -->
+      <!-- TAB 8: DOCTOR & CLINIC SIMULATOR VIEW -->
+      <!-- ========================================== -->
+      <div class="tab-pane fade" id="tab-doctor-simulator" role="tabpanel">
+        <div class="portal-card">
+          <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+            <div>
+              <div class="d-flex align-items-center gap-2">
+                <span class="badge bg-warning text-dark"><i class="bi bi-gear-fill"></i> Simulator Feature</span>
+                <h3 class="h4 fw-bold mb-0">Clinic & Doctor Patient Queue</h3>
+              </div>
+              <p class="text-muted mb-0">Experience the doctor's perspective! Manage appointments, update status, write consultation notes, and issue digital prescriptions.</p>
+            </div>
+            <button class="btn btn-sm btn-outline-secondary" onclick="loadDoctorSimulatorQueue()">
+              <i class="bi bi-arrow-clockwise"></i> Refresh Queue
+            </button>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table table-hover align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th>ID</th>
+                  <th>Patient Details</th>
+                  <th>Doctor</th>
+                  <th>Date & Time</th>
+                  <th>Type</th>
+                  <th>Status</th>
+                  <th class="text-end">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="simulator-queue-tbody">
+                <tr>
+                  <td colspan="7" class="text-center py-4 text-muted">Loading clinic queue…</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- End Tab Contents -->
+
+  </div><!-- End Main Container -->
+
+  <!-- ========================================== -->
+  <!-- MODAL: RESCHEDULE APPOINTMENT -->
+  <!-- ========================================== -->
+  <div class="modal fade" id="rescheduleModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title fw-bold"><i class="bi bi-clock-history text-primary me-2"></i>Reschedule Appointment</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="reschedule-appointment-id">
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Doctor</label>
+            <input type="text" class="form-control" id="reschedule-doctor-name" readonly disabled>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold" for="reschedule-date-input">Select New Date</label>
+            <input type="date" class="form-control" id="reschedule-date-input" onchange="loadRescheduleSlots()">
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Select Available Slot</label>
+            <div id="reschedule-slots-container" class="slot-grid">
+              <small class="text-muted col-12">Pick a date above to check available slots.</small>
+            </div>
+            <input type="hidden" id="reschedule-selected-time">
+          </div>
+          <div id="reschedule-message" class="small"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" onclick="submitReschedule()">Confirm Reschedule</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL: PRINTABLE APPOINTMENT SLIP / PASS -->
+  <!-- ========================================== -->
+  <div class="modal fade" id="slipModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title fw-bold"><i class="bi bi-file-earmark-text text-primary me-2"></i>Appointment Confirmation Slip</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="printable-slip-area">
+          <div class="p-4 border rounded-3 bg-white">
+            
+            <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-3">
+              <div>
+                <h4 class="fw-bold text-primary mb-0"><i class="bi bi-hospital"></i> MEDISIM HEALTH CLINIC</h4>
+                <small class="text-muted">Digital Healthcare Simulator System • Token ID: <strong id="slip-token">#APT-001</strong></small>
+              </div>
+              <div class="text-end">
+                <span class="barcode-sim" id="slip-barcode">||| |||| || |||</span>
+                <div class="small text-muted" id="slip-created">Date: 2026-11-15</div>
+              </div>
+            </div>
+
+            <div class="row g-3 mb-4">
+              <div class="col-sm-6">
+                <h6 class="text-muted small text-uppercase">Patient Details</h6>
+                <div class="fw-bold" id="slip-patient-name">Patient Name</div>
+                <div class="small text-muted" id="slip-patient-phone">Phone: +91 98765 43210</div>
+                <div class="small text-muted" id="slip-patient-blood">Blood Group: O+</div>
+              </div>
+              <div class="col-sm-6 text-sm-end">
+                <h6 class="text-muted small text-uppercase">Attending Specialist</h6>
+                <div class="fw-bold text-primary" id="slip-doctor-name">Dr. Ananya Rao</div>
+                <div class="small fw-semibold" id="slip-doctor-spec">General Physician</div>
+                <div class="small text-muted" id="slip-doctor-qual">MBBS, MD</div>
+              </div>
+            </div>
+
+            <div class="table-responsive mb-3">
+              <table class="table table-bordered">
+                <thead class="table-light">
+                  <tr>
+                    <th>Appointment Date</th>
+                    <th>Time Slot</th>
+                    <th>Consultation Mode</th>
+                    <th>Payment Status</th>
+                    <th class="text-end">Fee</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td id="slip-date" class="fw-bold">2026-11-20</td>
+                    <td id="slip-time">10:00 AM</td>
+                    <td id="slip-type">In-Person Clinic Visit</td>
+                    <td><span class="badge bg-success-subtle text-success" id="slip-pay">Paid (Simulated)</span></td>
+                    <td class="text-end fw-bold" id="slip-fee">₹500.00</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="p-3 bg-light rounded-3 small text-muted">
+              <strong>Instructions:</strong> Please present this digital token or barcode at the clinic reception 10 minutes prior to your scheduled consultation time. For video consultations, you can join directly via the Telemedicine Room in your portal.
+            </div>
+
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" onclick="window.print()">
+            <i class="bi bi-printer me-1"></i> Print / Save as PDF
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL: DIGITAL PRESCRIPTION (Rx) VIEWER -->
+  <!-- ========================================== -->
+  <div class="modal fade" id="prescriptionModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title fw-bold"><i class="bi bi-file-earmark-medical text-primary me-2"></i>Official Digital Prescription (Rx)</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="printable-rx-area">
+          <div class="p-4 border rounded-3 bg-white">
+            
+            <div class="rx-header d-flex justify-content-between align-items-center">
+              <div>
+                <h4 class="fw-bold text-primary mb-0">MediSim Clinical Centre</h4>
+                <small class="text-muted">Outpatient Consultation Department</small>
+              </div>
+              <div class="text-end">
+                <div class="fw-bold" id="rx-doctor-name">Dr. Kabir Mehta</div>
+                <div class="small text-muted" id="rx-doctor-spec">Cardiologist (MD, DM)</div>
+                <div class="small text-muted" id="rx-date">Date: 2026-11-10</div>
+              </div>
+            </div>
+
+            <div class="row g-2 mb-3 small bg-light p-3 rounded">
+              <div class="col-sm-4"><strong>Patient:</strong> <span id="rx-patient-name">Varun</span></div>
+              <div class="col-sm-4"><strong>Gender / Age:</strong> <span id="rx-patient-details">Male, 24 yrs</span></div>
+              <div class="col-sm-4"><strong>Blood Group:</strong> <span id="rx-patient-blood">O+</span></div>
+            </div>
+
+            <div class="mb-3">
+              <h6 class="fw-bold text-secondary">Clinical Findings & Diagnosis Notes:</h6>
+              <div class="p-3 bg-light rounded fst-italic" id="rx-diagnosis-notes">
+                Patient examined. Symptoms stable. Advised routine follow-up.
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <div class="d-flex align-items-center gap-2 mb-2">
+                <span class="rx-symbol">℞</span>
+                <h6 class="fw-bold mb-0 text-secondary">Prescribed Medications:</h6>
+              </div>
+              <div class="table-responsive">
+                <table class="table table-bordered table-sm align-middle">
+                  <thead class="table-light">
+                    <tr>
+                      <th>#</th>
+                      <th>Medicine Name</th>
+                      <th>Dosage</th>
+                      <th>Duration</th>
+                      <th>Instructions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="rx-meds-tbody">
+                    <tr>
+                      <td>1</td>
+                      <td>Amlodipine 5mg</td>
+                      <td>1 tablet daily</td>
+                      <td>30 days</td>
+                      <td>Take after breakfast</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-end pt-3 border-top mt-4">
+              <div class="small text-muted">
+                <div><i class="bi bi-shield-check text-success"></i> Digitally Signed & Verified</div>
+                <div>MediSim E-Prescription Simulator System</div>
+              </div>
+              <div class="text-center">
+                <div style="font-family: cursive; font-size: 1.3rem; color: #1977cc;" id="rx-signature">Dr. Kabir Mehta</div>
+                <div class="small text-muted border-top pt-1">Authorized Medical Signature</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" onclick="window.print()">
+            <i class="bi bi-printer me-1"></i> Print Prescription
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL: RATE & REVIEW DOCTOR -->
+  <!-- ========================================== -->
+  <div class="modal fade" id="reviewModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title fw-bold"><i class="bi bi-star-fill text-warning me-2"></i>Review Consultation</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="review-appointment-id">
+          <p class="text-muted small">Share your experience with <strong id="review-doctor-name">the doctor</strong> to help other patients.</p>
+
+          <div class="mb-3 text-center">
+            <label class="form-label d-block fw-semibold">Select Rating</label>
+            <div class="d-inline-flex gap-2 fs-3 text-warning" id="star-rating-box">
+              <i class="bi bi-star pointer-star" data-val="1" onclick="setStarRating(1)"></i>
+              <i class="bi bi-star pointer-star" data-val="2" onclick="setStarRating(2)"></i>
+              <i class="bi bi-star pointer-star" data-val="3" onclick="setStarRating(3)"></i>
+              <i class="bi bi-star pointer-star" data-val="4" onclick="setStarRating(4)"></i>
+              <i class="bi bi-star pointer-star" data-val="5" onclick="setStarRating(5)"></i>
+            </div>
+            <input type="hidden" id="review-rating-value" value="5">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold" for="review-comment">Feedback & Comments</label>
+            <textarea class="form-control" id="review-comment" rows="3" placeholder="How was the consultation, attentiveness, and explanation?"></textarea>
+          </div>
+          <div id="review-alert" class="small"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" onclick="submitReview()">Submit Review</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL: DOCTOR SIMULATOR PRESCRIBE MODAL -->
+  <!-- ========================================== -->
+  <div class="modal fade" id="doctorPrescribeModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-light">
+          <h5 class="modal-title fw-bold"><i class="bi bi-hospital text-primary me-2"></i>Clinical Diagnosis & Prescription Entry</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="sim-prescribe-apt-id">
+          
+          <div class="row g-2 mb-3 p-3 bg-light rounded small">
+            <div class="col-sm-6"><strong>Patient:</strong> <span id="sim-prescribe-patient">Varun</span></div>
+            <div class="col-sm-6"><strong>Chief Complaint:</strong> <span id="sim-prescribe-reason">Routine Checkup</span></div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold" for="sim-doctor-notes">Doctor Clinical Notes / Diagnosis</label>
+            <textarea class="form-control" id="sim-doctor-notes" rows="3" placeholder="Enter clinical assessment, vitals, diagnosis, and diet/exercise recommendations…"></textarea>
+          </div>
+
+          <div class="mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <label class="form-label fw-semibold mb-0">Prescribed Medications</label>
+              <button type="button" class="btn btn-sm btn-outline-primary" onclick="addPrescriptionRow()">
+                <i class="bi bi-plus-circle me-1"></i> Add Medication
+              </button>
+            </div>
+            
+            <div id="sim-meds-list" class="d-flex flex-column gap-2">
+              <!-- Dynamically added medication rows -->
+            </div>
+          </div>
+
+          <div id="sim-prescribe-alert" class="small"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-success" onclick="submitDoctorPrescription()">
+            <i class="bi bi-check2-circle me-1"></i> Issue Rx & Complete Visit
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container for instant feedback -->
+  <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1090;" id="toast-container"></div>
+
+  <!-- Scripts -->
+  <script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/portal.js"></script>
+</body>
+</html>

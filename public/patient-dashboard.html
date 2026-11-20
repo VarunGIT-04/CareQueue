@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Patient Dashboard | CareQueue</title>
+  
+  <!-- Vendor CSS -->
+  <link href="/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+  <link href="/assets/vendor/aos/aos.css" rel="stylesheet">
+
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="/css/portal.css" rel="stylesheet">
+  <style>
+    body { font-family: "Manrope", "Segoe UI", sans-serif; background: linear-gradient(180deg, #f3f8f8, #eef3f5); }
+    .navbar.patient-nav {
+      background: linear-gradient(110deg, #153744, #0b7f82) !important;
+    }
+    .navbar-brand { font-family: "Sora", Manrope, sans-serif; letter-spacing: -0.02em; }
+    .patient-header {
+      background: linear-gradient(125deg, #163b48 0%, #1a5f66 52%, #0b7f82 100%);
+      color: white;
+      padding: 2rem;
+      border-radius: 22px;
+      margin-bottom: 2rem;
+      box-shadow: 0 18px 36px rgba(18, 55, 68, 0.16);
+      position: relative;
+      overflow: hidden;
+    }
+    .patient-header::after {
+      content: "";
+      position: absolute;
+      right: -30px;
+      top: -40px;
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.08);
+    }
+    .patient-header h2 { font-family: "Sora", Manrope, sans-serif; }
+    .stat-card {
+      border: 1px solid #e4eef0;
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: 0 10px 24px rgba(18,55,68,0.05);
+      transition: transform 0.2s, box-shadow 0.2s;
+      background: #fff;
+    }
+    .stat-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 30px rgba(18,55,68,0.09);
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark patient-nav sticky-top shadow-sm">
+    <div class="container">
+      <a class="navbar-brand fw-bold" href="/">
+        <i class="bi bi-heart-pulse me-2"></i>CareQueue
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item"><a class="nav-link active" href="/patient-dashboard.html">Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link" href="/book-appointment.html">Book Appointment</a></li>
+          <li class="nav-item"><a class="nav-link" href="/my-appointments.html">My Appointments</a></li>
+          <li class="nav-item"><a class="nav-link" href="/prescriptions.html">Prescriptions</a></li>
+        </ul>
+        <div class="dropdown">
+          <button class="btn btn-light dropdown-toggle rounded-pill px-3" type="button" data-bs-toggle="dropdown">
+            <i class="bi bi-person-circle me-1"></i> <span id="nav-user-name">Patient</span>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item" href="/profile.html">My Profile</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item text-danger" href="#" id="logout-btn">Logout</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container py-4">
+    <!-- Welcome Section -->
+    <div class="patient-header shadow-sm" data-aos="fade-down">
+      <div class="row align-items-center">
+        <div class="col-md-8">
+          <h2 class="fw-bold mb-2">Namaste, <span id="dash-greeting-name">Patient</span>!</h2>
+          <p class="lead mb-3">Welcome to your digital health dashboard. Manage your consultations and medical records with ease.</p>
+          <div class="d-flex gap-2">
+            <a href="/book-appointment.html" class="btn btn-light text-primary fw-bold">
+              <i class="bi bi-calendar-plus me-1"></i> New Appointment
+            </a>
+            <a href="/prescriptions.html" class="btn btn-outline-light">
+              <i class="bi bi-file-earmark-medical me-1"></i> View Rx
+            </a>
+          </div>
+        </div>
+        <div class="col-md-4 text-end d-none d-md-block">
+          <i class="bi bi-heart-pulse-fill opacity-25" style="font-size: 8rem;"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="row g-4 mb-4" data-aos="fade-up">
+      <div class="col-md-3">
+        <div class="stat-card bg-white text-center">
+          <div class="display-6 fw-bold text-primary" id="stat-upcoming">0</div>
+          <div class="text-muted small text-uppercase fw-semibold">Upcoming</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="stat-card bg-white text-center">
+          <div class="display-6 fw-bold text-success" id="stat-completed">0</div>
+          <div class="text-muted small text-uppercase fw-semibold">Completed</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="stat-card bg-white text-center">
+          <div class="display-6 fw-bold text-info" id="stat-prescriptions">0</div>
+          <div class="text-muted small text-uppercase fw-semibold">Prescriptions</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="stat-card bg-white text-center">
+          <div class="display-6 fw-bold text-warning" id="stat-tokens">0</div>
+          <div class="text-muted small text-uppercase fw-semibold">Active Tokens</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-4">
+      <!-- Next Appointment -->
+      <div class="col-lg-7" data-aos="fade-right">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+          <div class="card-body p-4">
+            <h5 class="fw-bold mb-4 text-dark">
+              <i class="bi bi-calendar-check text-primary me-2"></i>Next Consultation
+            </h5>
+            <div id="next-appointment-container">
+              <div class="text-center py-5 text-muted">
+                <i class="bi bi-calendar2-x fs-1 d-block mb-3"></i>
+                <p>No upcoming appointments found.</p>
+                <a href="/book-appointment.html" class="btn btn-primary btn-sm">Book Now</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="col-lg-5" data-aos="fade-left">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+          <div class="card-body p-4">
+            <h5 class="fw-bold mb-4 text-dark">
+              <i class="bi bi-lightning-charge text-warning me-2"></i>Quick Services
+            </h5>
+            <div class="list-group list-group-flush">
+              <a href="/book-appointment.html" class="list-group-item list-group-item-action border-0 py-3 px-0 d-flex align-items-center">
+                <div class="bg-primary-subtle text-primary rounded-circle p-2 me-3">
+                  <i class="bi bi-plus-circle fs-5"></i>
+                </div>
+                <div>
+                  <h6 class="mb-0 fw-bold">Book a Slot</h6>
+                  <small class="text-muted">Choose your preferred Indian specialist</small>
+                </div>
+                <i class="bi bi-chevron-right ms-auto text-muted"></i>
+              </a>
+              <a href="/prescriptions.html" class="list-group-item list-group-item-action border-0 py-3 px-0 d-flex align-items-center">
+                <div class="bg-success-subtle text-success rounded-circle p-2 me-3">
+                  <i class="bi bi-file-earmark-medical fs-5"></i>
+                </div>
+                <div>
+                  <h6 class="mb-0 fw-bold">Medical Records</h6>
+                  <small class="text-muted">Download digital prescriptions & notes</small>
+                </div>
+                <i class="bi bi-chevron-right ms-auto text-muted"></i>
+              </a>
+              <a href="/profile.html" class="list-group-item list-group-item-action border-0 py-3 px-0 d-flex align-items-center">
+                <div class="bg-info-subtle text-info rounded-circle p-2 me-3">
+                  <i class="bi bi-person-badge fs-5"></i>
+                </div>
+                <div>
+                  <h6 class="mb-0 fw-bold">My Profile</h6>
+                  <small class="text-muted">Update your health details and history</small>
+                </div>
+                <i class="bi bi-chevron-right ms-auto text-muted"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="/assets/vendor/aos/aos.js"></script>
+  <script src="/js/patient-dashboard.js"></script>
+  <script>
+    AOS.init({ duration: 800, once: true });
+  </script>
+</body>
+</html>

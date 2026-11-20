@@ -1,0 +1,324 @@
+/* ========================================================
+   Apex Multispeciality Hospital - Professional Styling
+   ======================================================== */
+
+:root {
+  --hosp-primary: #0b7f82;
+  --hosp-primary-dark: #0a6568;
+  --hosp-secondary: #153744;
+  --hosp-accent: #14a3a6;
+  --hosp-light: #f3f8f8;
+  --hosp-card-bg: #ffffff;
+  --hosp-border: #e4eef0;
+  --hosp-text: #142c36;
+  --hosp-muted: #6a7f88;
+  --hosp-success: #10b981;
+  --hosp-warning: #f59e0b;
+  --hosp-danger: #ef4444;
+}
+
+.doctor-avatar { width: 48px; height: 48px; border-radius: 50%; display: inline-grid; place-items: center; flex: 0 0 auto; color: #167c7a; background: linear-gradient(145deg, #e4f4f1, #e4edf5); font-size: 22px; }
+.doctor-avatar-lg { width: 70px; height: 70px; font-size: 30px; }
+.doctor-avatar-feature { width: 100%; height: 190px; border-radius: 14px; font-size: 78px; }
+
+body {
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: var(--hosp-text);
+  background-color: #f1f5f9;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1;
+}
+
+/* Hospital Header & Topbar */
+.hosp-topbar {
+  background-color: #0f172a;
+  color: #cbd5e1;
+  font-size: 0.82rem;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.hosp-topbar a {
+  color: #93c5fd;
+  text-decoration: none;
+}
+
+.hosp-navbar {
+  background-color: #ffffff;
+  border-bottom: 1px solid var(--hosp-border);
+  box-shadow: 0 2px 12px rgba(15, 23, 42, 0.05);
+}
+
+.hosp-brand {
+  font-weight: 800;
+  font-size: 1.3rem;
+  color: var(--hosp-primary);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.hosp-brand:hover {
+  color: var(--hosp-primary-dark);
+}
+
+.hosp-nav-link {
+  font-weight: 500;
+  color: var(--hosp-text);
+  padding: 8px 14px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 0.92rem;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hosp-nav-link:hover,
+.hosp-nav-link.active {
+  color: var(--hosp-primary);
+  background-color: rgba(2, 132, 199, 0.08);
+}
+
+/* Page banner (dark hero) — headings inherit the template's dark heading color,
+   so force banner text to white for readability in both light and dark themes */
+.page-banner h1,
+.page-banner h2,
+.page-banner h3,
+.page-banner h4,
+.page-banner h5,
+.page-banner h6,
+.page-banner p,
+.page-banner small,
+.page-banner .page-crumb {
+  color: #ffffff;
+}
+
+/* User Profile Badge */
+.user-chip {
+  background: #f8fafc;
+  border: 1px solid var(--hosp-border);
+  padding: 5px 12px;
+  border-radius: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.user-initials {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--hosp-primary);
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+/* Cards & Containers */
+.hosp-card {
+  background: #ffffff;
+  border: 1px solid var(--hosp-border);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+  margin-bottom: 24px;
+}
+
+.stat-kpi-card {
+  background: #ffffff;
+  border: 1px solid var(--hosp-border);
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.03);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.stat-kpi-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+}
+
+.kpi-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+
+.kpi-blue { background: #e0f2fe; color: #0284c7; }
+.kpi-green { background: #dcfce7; color: #10b981; }
+.kpi-orange { background: #fef3c7; color: #d97706; }
+.kpi-purple { background: #f3e8ff; color: #9333ea; }
+.kpi-red { background: #fee2e2; color: #ef4444; }
+
+/* Interactive Slots Grid */
+.slot-selection-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.slot-btn {
+  padding: 8px 10px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--hosp-text);
+  cursor: pointer;
+  transition: all 0.18s ease;
+  text-align: center;
+}
+
+.slot-btn:hover:not(:disabled) {
+  border-color: var(--hosp-primary);
+  background-color: #e0f2fe;
+  color: var(--hosp-primary);
+}
+
+.slot-btn.selected {
+  background-color: var(--hosp-primary) !important;
+  color: #ffffff !important;
+  border-color: var(--hosp-primary) !important;
+  box-shadow: 0 4px 10px rgba(2, 132, 199, 0.3);
+}
+
+.slot-btn:disabled,
+.slot-btn.booked {
+  background-color: #f1f5f9;
+  border-color: #e2e8f0;
+  color: #94a3b8;
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
+
+/* Appointment Summary Token Box */
+.token-badge-lg {
+  font-size: 1.6rem;
+  font-weight: 800;
+  background: #e0f2fe;
+  color: #0369a1;
+  padding: 6px 18px;
+  border-radius: 8px;
+  border: 2px dashed #0284c7;
+  display: inline-block;
+  letter-spacing: 2px;
+}
+
+.price-tag-lg {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #10b981;
+}
+
+/* Status Badges */
+.badge-status {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+
+.badge-booked { background: #dbeafe; color: #1d4ed8; }
+.badge-completed { background: #dcfce7; color: #15803d; }
+.badge-cancelled { background: #fee2e2; color: #b91c1c; }
+
+/* Prescription & Slip Layout */
+.rx-paper {
+  background: #ffffff;
+  border: 2px solid #0284c7;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.06);
+}
+
+.rx-symbol {
+  font-family: serif;
+  font-size: 2.2rem;
+  font-weight: bold;
+  color: #0284c7;
+  line-height: 1;
+}
+
+/* Tables */
+.table th {
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #64748b;
+  font-weight: 600;
+}
+
+/* Footer */
+.hosp-footer {
+  background-color: #0f172a;
+  color: #94a3b8;
+  padding: 24px 0;
+  font-size: 0.88rem;
+  border-top: 1px solid #1e293b;
+}
+
+.hosp-footer a {
+  color: #38bdf8;
+  text-decoration: none;
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #printable-slip-area,
+  #printable-slip-area * {
+    visibility: visible;
+  }
+  #printable-slip-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+}
+/* Keep footer text readable against its dark background in the light-only interface. */
+.hosp-footer,
+.hosp-footer p,
+.hosp-footer .small,
+.hosp-footer .text-muted,
+.hosp-footer li,
+.hosp-footer div {
+  color: #cbd5e1 !important;
+  opacity: 1;
+}
+.hosp-footer h5,
+.hosp-footer h6,
+.hosp-footer strong {
+  color: #f8fafc !important;
+}
+.hosp-footer a {
+  color: #38bdf8 !important;
+}
+.hosp-footer a:hover,
+.hosp-footer a:focus {
+  color: #7dd3fc !important;
+  text-decoration: underline;
+}

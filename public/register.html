@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Patient Registration | CareQueue</title>
+  <meta name="description" content="Register as a patient with CareQueue.">
+
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="/css/hospital.css" rel="stylesheet">
+  <link href="/css/auth.css" rel="stylesheet">
+  <style>
+    .auth-shell.register-shell {
+      grid-template-columns: 1fr;
+      max-width: 640px;
+    }
+    .auth-card.register-card {
+      width: 100%;
+    }
+  </style>
+</head>
+
+<body class="auth-body">
+  <div class="auth-atmosphere" aria-hidden="true">
+    <div class="auth-orb auth-orb-a"></div>
+    <div class="auth-orb auth-orb-b"></div>
+    <div class="auth-orb auth-orb-c"></div>
+    <div class="auth-grid"></div>
+    <div class="auth-waveform"></div>
+  </div>
+
+  <header class="auth-topbar">
+    <a href="/" class="auth-brand">
+      <span class="auth-brand-mark"><i class="bi bi-heart-pulse"></i></span>
+      <span>
+        <strong>CareQueue</strong>
+        <small>Care management</small>
+      </span>
+    </a>
+    <a href="/login.html" class="auth-home-link"><i class="bi bi-box-arrow-in-right me-1"></i> Sign in</a>
+  </header>
+
+  <main class="auth-shell register-shell">
+    <section class="auth-card register-card">
+      <div class="auth-card-head">
+        <div class="auth-icon"><i class="bi bi-person-plus-fill"></i></div>
+        <h2>Create patient account</h2>
+        <p>Book appointments and view digital prescriptions</p>
+      </div>
+
+      <form id="registerForm" onsubmit="handleRegisterSubmit(event)">
+        <div id="register-error-alert" class="alert alert-danger py-2 small d-none mb-3"></div>
+
+        <div class="row g-3">
+          <div class="col-12">
+            <label class="form-label fw-semibold small" for="reg-name">Full name *</label>
+            <input type="text" class="form-control" id="reg-name" required placeholder="e.g. Varun Kumar" autocomplete="name">
+          </div>
+
+          <div class="col-12">
+            <label class="form-label fw-semibold small" for="reg-email">Email address *</label>
+            <input type="email" class="form-control" id="reg-email" required placeholder="name@example.com" autocomplete="email">
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label fw-semibold small" for="reg-phone">Contact phone *</label>
+            <input type="tel" class="form-control" id="reg-phone" required placeholder="+91 98765 43210" autocomplete="tel">
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label fw-semibold small" for="reg-blood">Blood group</label>
+            <select class="form-select" id="reg-blood">
+              <option value="">Select (optional)</option>
+              <option value="A+">A+</option>
+              <option value="A-">A-</option>
+              <option value="B+">B+</option>
+              <option value="B-">B-</option>
+              <option value="O+">O+</option>
+              <option value="O-">O-</option>
+              <option value="AB+">AB+</option>
+              <option value="AB-">AB-</option>
+            </select>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label fw-semibold small" for="reg-age">Age</label>
+            <input type="number" class="form-control" id="reg-age" min="1" max="120" placeholder="e.g. 25">
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label fw-semibold small" for="reg-gender">Gender</label>
+            <select class="form-select" id="reg-gender">
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div class="col-12">
+            <label class="form-label fw-semibold small" for="reg-password">Password * (min 6 characters)</label>
+            <input type="password" class="form-control" id="reg-password" required minlength="6" placeholder="Create a secure password" autocomplete="new-password">
+          </div>
+        </div>
+
+        <button type="submit" class="btn auth-submit w-100 py-2 fw-semibold mt-4 mb-3" id="btn-reg-submit">
+          Complete registration
+        </button>
+
+        <div class="text-center small text-muted">
+          Already registered? <a href="/login.html" class="fw-semibold auth-link">Sign in here</a>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <footer class="auth-footer">© 2026 CareQueue. All rights reserved.</footer>
+
+  <script>
+    async function handleRegisterSubmit(event) {
+      event.preventDefault();
+      const errAlert = document.getElementById("register-error-alert");
+      const btn = document.getElementById("btn-reg-submit");
+
+      errAlert.classList.add("d-none");
+      btn.disabled = true;
+      btn.innerHTML = `<span class="spinner-border spinner-border-sm me-1"></span> Registering…`;
+
+      const payload = {
+        name: document.getElementById("reg-name").value.trim(),
+        email: document.getElementById("reg-email").value.trim(),
+        phone: document.getElementById("reg-phone").value.trim(),
+        bloodGroup: document.getElementById("reg-blood").value,
+        age: document.getElementById("reg-age").value,
+        gender: document.getElementById("reg-gender").value,
+        password: document.getElementById("reg-password").value
+      };
+
+      try {
+        const res = await fetch("/api/register", {
+          method: "POST",
+          credentials: "same-origin",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || "Registration failed.");
+        window.location.href = data.redirectUrl || "/patient-dashboard.html";
+      } catch (err) {
+        errAlert.textContent = err.message;
+        errAlert.classList.remove("d-none");
+        btn.disabled = false;
+        btn.textContent = "Complete registration";
+      }
+    }
+  </script>
+</body>
+</html>

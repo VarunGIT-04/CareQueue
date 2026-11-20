@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>Departments | CareQueue</title>
+  <meta name="description" content="Explore the medical departments and specialties available on CareQueue.">
+
+  <!-- Icons -->
+  <link href="assets/img/favicon.png" rel="icon">
+  <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+  <link href="assets/vendor/aos/aos.css" rel="stylesheet">
+  <link href="assets/css/main.css" rel="stylesheet">
+  <link href="css/hospital.css" rel="stylesheet">
+
+  <style>
+    :root { --brand:#087e80; --brand-dark:#153b48; }
+    body { font-family: 'Poppins', sans-serif; }
+    .hosp-topbar { background:#133744; }
+    .hosp-navbar { box-shadow:0 5px 22px rgba(18,47,57,.07); }
+    .hosp-brand { color:var(--brand-dark); }
+    .hosp-brand .bi { color:var(--brand); }
+    .btn-primary { background:#087e80; border-color:#087e80; }
+    .page-banner {
+      background:linear-gradient(110deg,rgba(13,47,58,.93),rgba(10,86,88,.78)),url('assets/img/hero-bg.jpg') center/cover no-repeat;
+      color:#fff;
+      padding:70px 0 60px;
+    }
+    .dept-card {
+      background:#fff; border:1px solid #e2e8f0; border-radius:18px; overflow:hidden;
+      transition:all .25s ease; height:100%; box-shadow:0 4px 15px rgba(15,23,42,.04);
+    }
+    .dept-card:hover { transform:translateY(-4px); box-shadow:0 12px 28px rgba(15,23,42,.09); border-color:#087e80; }
+    .dept-img { height:180px; width:100%; object-fit:cover; }
+    .page-crumb a { color:#93c5fd; text-decoration:none; }
+  </style>
+</head>
+
+<body>
+
+  <!-- CareQueue project bar -->
+  <div class="hosp-topbar">
+    <div class="container d-flex justify-content-between align-items-center flex-wrap gap-2">
+      <div class="d-flex align-items-center gap-3">
+        <span><i class="bi bi-calendar2-check text-info me-1"></i> Your care, organized in one place</span>
+        <span class="d-none d-md-inline">|</span>
+        <span class="d-none d-md-inline"><i class="bi bi-shield-check text-success me-1"></i> Appointment management demo</span>
+      </div>
+      <div class="d-flex align-items-center gap-3">
+        <span><i class="bi bi-calendar-check text-success me-1"></i> Book and manage appointments</span>
+        <span class="d-none d-sm-inline">|</span>
+        <a href="/login.html?role=doctor" class="d-none d-sm-inline"><i class="bi bi-person-badge me-1"></i>Doctor Portal</a>
+        <span class="d-none d-sm-inline">|</span>
+        <a href="/login.html?role=admin" class="d-none d-sm-inline"><i class="bi bi-shield-lock me-1"></i>Admin</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Navbar -->
+  <header class="hosp-navbar sticky-top">
+    <div class="container d-flex align-items-center justify-content-between py-2">
+
+      <a href="/" class="hosp-brand">
+        <i class="bi bi-heart-pulse fs-2"></i>
+        <div>
+          <div class="lh-1">CAREQUEUE</div>
+          <small class="text-muted fw-normal" style="font-size: 0.72rem; letter-spacing: 0.5px;">YOUR CARE, CONNECTED</small>
+        </div>
+      </a>
+
+      <nav class="d-none d-lg-flex align-items-center gap-2">
+        <a href="/" class="hosp-nav-link">Home</a>
+        <a href="/departments.html" class="hosp-nav-link active">Departments</a>
+        <a href="/facilities.html" class="hosp-nav-link">Facilities</a>
+        <a href="/about.html" class="hosp-nav-link">About</a>
+        <a href="/contact.html" class="hosp-nav-link">Contact</a>
+      </nav>
+
+      <div class="d-flex align-items-center gap-2">
+        <a href="/login.html" class="btn btn-outline-primary btn-sm px-3 fw-semibold">
+          <i class="bi bi-box-arrow-in-right me-1"></i> Sign In
+        </a>
+        <a href="/login.html?redirect=/book-appointment.html" class="btn btn-primary btn-sm px-3 fw-semibold">
+          <i class="bi bi-calendar-check me-1"></i> Book Appointment
+        </a>
+      </div>
+
+    </div>
+  </header>
+
+  <main>
+
+    <!-- Page Banner -->
+    <section class="page-banner">
+      <div class="container">
+        <div class="page-crumb small mb-2">
+          <a href="/"><i class="bi bi-house me-1"></i>Home</a> <span class="opacity-75">/ Departments</span>
+        </div>
+        <h1 class="fw-bold mb-2">Our Specialized Departments</h1>
+        <p class="mb-0 opacity-90" style="max-width: 640px;">
+          Led by experienced consultants, each department combines clinical expertise with a simple, connected appointment journey.
+        </p>
+      </div>
+    </section>
+
+    <!-- Departments -->
+    <section id="departments" class="py-5 bg-white">
+      <div class="container py-3">
+        <div class="text-center mb-5" data-aos="fade-up">
+          <span class="text-primary fw-bold text-uppercase small" style="letter-spacing: 1px;">Centres of Clinical Excellence</span>
+          <h2 class="fw-bold mt-1">Choose the Care You Need</h2>
+          <p class="text-muted mx-auto" style="max-width: 650px;">
+            Select a department, view its specialists, and book a time slot that suits you — all from one place.
+          </p>
+        </div>
+
+        <div class="row g-4">
+          <!-- Cardiology -->
+          <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="100">
+            <div class="dept-card">
+              <img src="assets/img/departments-1.jpg" class="dept-img" alt="Cardiology">
+              <div class="p-4">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <h5 class="fw-bold mb-0">Cardiology</h5>
+                  <span class="badge bg-primary-subtle text-primary">Heart Care</span>
+                </div>
+                <p class="text-muted small mb-3">Expert care for heart ailments, including hypertension, coronary artery disease, and preventive cardiac screenings.</p>
+                <a href="/login.html?redirect=/book-appointment.html" class="btn btn-sm btn-outline-primary fw-semibold w-100">
+                  Consult Cardiologist
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Neurology -->
+          <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="200">
+            <div class="dept-card">
+              <img src="assets/img/departments-2.jpg" class="dept-img" alt="Neurology">
+              <div class="p-4">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <h5 class="fw-bold mb-0">Neurology</h5>
+                  <span class="badge bg-info-subtle text-info">Brain &amp; Spine</span>
+                </div>
+                <p class="text-muted small mb-3">Comprehensive diagnosis and treatment for neurological disorders, stroke, and chronic migraine management.</p>
+                <a href="/login.html?redirect=/book-appointment.html" class="btn btn-sm btn-outline-primary fw-semibold w-100">
+                  Consult Neurologist
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pediatrics -->
+          <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="300">
+            <div class="dept-card">
+              <img src="assets/img/departments-3.jpg" class="dept-img" alt="Pediatrics">
+              <div class="p-4">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <h5 class="fw-bold mb-0">Pediatrics</h5>
+                  <span class="badge bg-warning-subtle text-warning">Child Health</span>
+                </div>
+                <p class="text-muted small mb-3">Specialized child healthcare, from newborn care to adolescent medicine and routine immunizations.</p>
+                <a href="/login.html?redirect=/book-appointment.html" class="btn btn-sm btn-outline-primary fw-semibold w-100">
+                  Consult Pediatrician
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Orthopedics -->
+          <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="100">
+            <div class="dept-card">
+              <img src="assets/img/departments-4.jpg" class="dept-img" alt="Orthopedics">
+              <div class="p-4">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <h5 class="fw-bold mb-0">Orthopedics</h5>
+                  <span class="badge bg-success-subtle text-success">Bone &amp; Joint</span>
+                </div>
+                <p class="text-muted small mb-3">Advanced bone and joint care, sports medicine, fracture management, and orthopedic rehabilitation.</p>
+                <a href="/login.html?redirect=/book-appointment.html" class="btn btn-sm btn-outline-primary fw-semibold w-100">
+                  Consult Orthopedic
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dermatology -->
+          <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="200">
+            <div class="dept-card">
+              <img src="assets/img/departments-5.jpg" class="dept-img" alt="Dermatology">
+              <div class="p-4">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <h5 class="fw-bold mb-0">Dermatology</h5>
+                  <span class="badge bg-danger-subtle text-danger">Skin &amp; Allergy</span>
+                </div>
+                <p class="text-muted small mb-3">Clinical skin treatments for allergies, chronic conditions, and expert dermatological consultations for all ages.</p>
+                <a href="/login.html?redirect=/book-appointment.html" class="btn btn-sm btn-outline-primary fw-semibold w-100">
+                  Consult Dermatologist
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- General Medicine -->
+          <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="300">
+            <div class="dept-card">
+              <img src="assets/img/about.jpg" class="dept-img" alt="General Medicine">
+              <div class="p-4">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <h5 class="fw-bold mb-0">General Medicine</h5>
+                  <span class="badge bg-primary-subtle text-primary">Family Health</span>
+                </div>
+                <p class="text-muted small mb-3">Primary healthcare, lifestyle management, and diagnosis for general ailments by senior physicians.</p>
+                <a href="/login.html?redirect=/book-appointment.html" class="btn btn-sm btn-outline-primary fw-semibold w-100">
+                  Consult Physician
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- How it works -->
+    <section class="py-5" style="background-color:#f8fafc;">
+      <div class="container py-3">
+        <div class="row g-4 text-center">
+          <div class="col-md-4" data-aos="fade-up">
+            <div class="hosp-card h-100 border-0 shadow-sm rounded-4">
+              <div class="kpi-icon kpi-blue mx-auto mb-3"><i class="bi bi-1-circle"></i></div>
+              <h5 class="fw-bold">Pick a Department</h5>
+              <p class="text-muted small mb-0">Browse specialties and compare available consultants.</p>
+            </div>
+          </div>
+          <div class="col-md-4" data-aos="fade-up" data-aos-delay="150">
+            <div class="hosp-card h-100 border-0 shadow-sm rounded-4">
+              <div class="kpi-icon kpi-green mx-auto mb-3"><i class="bi bi-2-circle"></i></div>
+              <h5 class="fw-bold">Choose a Slot</h5>
+              <p class="text-muted small mb-0">See real-time availability — no two patients get the same slot.</p>
+            </div>
+          </div>
+          <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+            <div class="hosp-card h-100 border-0 shadow-sm rounded-4">
+              <div class="kpi-icon kpi-orange mx-auto mb-3"><i class="bi bi-3-circle"></i></div>
+              <h5 class="fw-bold">Get Your Token</h5>
+              <p class="text-muted small mb-0">Receive a token number and track your consultation status.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="hosp-footer">
+    <div class="container">
+      <div class="row gy-4 mb-4">
+        <div class="col-lg-4">
+          <h5 class="fw-bold text-white mb-3"><i class="bi bi-heart-pulse text-primary me-2"></i>CareQueue</h5>
+          <p class="small text-muted mb-2">A simple platform to discover specialists and stay organized through every appointment.</p>
+          <div class="small text-muted"><i class="bi bi-laptop me-1"></i> Digital appointment management project</div>
+        </div>
+        <div class="col-lg-2 col-6">
+          <h6 class="text-white fw-bold mb-3">Portals</h6>
+          <ul class="list-unstyled small d-flex flex-column gap-2 mb-0">
+            <li><a href="/login.html">Patient Login</a></li>
+            <li><a href="/register.html">New Patient Registration</a></li>
+            <li><a href="/login.html?role=doctor">Doctor Portal</a></li>
+            <li><a href="/login.html?role=admin">CareQueue Admin</a></li>
+          </ul>
+        </div>
+        <div class="col-lg-3 col-6">
+          <h6 class="text-white fw-bold mb-3">Key Departments</h6>
+          <ul class="list-unstyled small d-flex flex-column gap-2 mb-0">
+            <li><a href="/departments.html">Cardiology</a></li>
+            <li><a href="/departments.html">Neurology</a></li>
+            <li><a href="/departments.html">Pediatrics</a></li>
+            <li><a href="/departments.html">Orthopedics</a></li>
+            <li><a href="/departments.html">Dermatology</a></li>
+          </ul>
+        </div>
+        <div class="col-lg-3">
+          <h6 class="text-white fw-bold mb-3">Project details</h6>
+          <div class="small text-muted mb-2"><strong>Platform:</strong> Appointment and queue management</div>
+          <div class="small text-muted"><strong>Project:</strong> Appointment management simulator</div>
+        </div>
+      </div>
+
+      <div class="border-top border-secondary pt-3 text-center small text-muted">
+        © 2026 CareQueue. A healthcare appointment management project.
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/vendor/aos/aos.js"></script>
+  <script src="/js/app.js"></script>
+  <script>
+    AOS.init({ duration: 800, once: true });
+  </script>
+  
+</body>
+</html>
