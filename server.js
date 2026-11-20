@@ -1,8 +1,13 @@
+
 require("dotenv").config();
 
 const express = require("express");
 const mysql = require("mysql2/promise");
 const session = require("express-session");
+const {
+  MySQLSessionStore,
+  initSessionTable
+} = require("./mysql-session-store");
 const bcrypt = require("bcrypt");
 const path = require("path");
 
@@ -15,28 +20,36 @@ if (process.env.NODE_ENV === "production") {
   app.set("trust proxy", 1);
 }
 
-app.use(
-  session({
-   secret: process.env.SESSION_SECRET,
-resave: false,
-saveUninitialized: false,
-cookie: {
-  httpOnly: true,
-  sameSite: "lax",
-  secure: process.env.NODE_ENV === "production",
-  maxAge: 1000 * 60 * 60 * 24
-}
-  })
-);
-
 const { getDbConfig } = require("./db-config");
 
+// Main MySQL/TiDB connection pool
 const db = mysql.createPool({
   ...getDbConfig(),
   waitForConnections: true,
   connectionLimit: 5,
   dateStrings: true
 });
+
+// Persistent MySQL session storage
+const sessionStore = new MySQLSessionStore(db);
+
+// Express session configuration
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    store: sessionStore,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 1000 * 60 * 60 * 24
+    }
+  })
+);
+
+
 
 // Helper: 24h to 12h format
 function formatTime12h(timeStr) {
@@ -875,8 +888,20 @@ adminPages.forEach((pagePath) => {
 // Static assets
 app.use(express.static(path.join(__dirname, "public")));
 
+
 const port = process.env.PORT || 3000;
 
-app.listen(port, "0.0.0.0", () => {
-  console.log(`CareQueue running at http://localhost:${port}`);
-});
+async function startServer() {
+  try {
+    await initSessionTable(db);
+    console.log("Persistent session store is ready.");
+
+    app.listen(port, "0.0.0.0", () => {
+      console.log(`CareQueue running on port ${port}`);
+    });
+  } catch (error) {
+    console.error("Failed to initialize session store:", error);
+    process.exit(1);
+  }
+}
+startServer();

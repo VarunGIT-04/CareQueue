@@ -8,8 +8,7 @@
     "db:init": "node init-db.js",
     "migrate": "node migrate.js",
     "setup": "node setup-hospital-db.js",
-    "seed": "node seed.js",
-    "test": "node test-server.js"
+    "seed": "node seed.js"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
@@ -17,5 +16,6 @@
     "express": "^5.3.0",
     "express-session": "^1.19.0",
     "mysql2": "^3.24.6"
-  }
+  },
+  "overrides": {}
 }
