@@ -11,26 +11,30 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+if (process.env.NODE_ENV === "production") {
+  app.set("trust proxy", 1);
+}
+
 app.use(
   session({
-    secret: process.env.SESSION_SECRET || "city-care-hospital-secret-key-2026",
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      httpOnly: true,
-      sameSite: "lax",
-      maxAge: 1000 * 60 * 60 * 24 // 24 hours
-    }
+   secret: process.env.SESSION_SECRET,
+resave: false,
+saveUninitialized: false,
+cookie: {
+  httpOnly: true,
+  sameSite: "lax",
+  secure: process.env.NODE_ENV === "production",
+  maxAge: 1000 * 60 * 60 * 24
+}
   })
 );
 
+const { getDbConfig } = require("./db-config");
+
 const db = mysql.createPool({
-  host: process.env.DB_HOST || "localhost",
-  user: process.env.DB_USER || "root",
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
+  ...getDbConfig(),
   waitForConnections: true,
-  connectionLimit: 10,
+  connectionLimit: 5,
   dateStrings: true
 });
 

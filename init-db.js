@@ -1,5 +1,6 @@
 require("dotenv").config();
 const mysql = require("mysql2/promise");
+const { getDbConfig } = require("./db-config");
 
 async function initializeDatabase() {
   const databaseName = process.env.DB_NAME;
@@ -7,11 +8,9 @@ async function initializeDatabase() {
     throw new Error("Set DB_NAME to a database name containing only letters, numbers, and underscores.");
   }
 
-  const db = await mysql.createConnection({
-    host: process.env.DB_HOST || "localhost",
-    user: process.env.DB_USER || "root",
-    password: process.env.DB_PASSWORD
-  });
+  const db = await mysql.createConnection(
+  getDbConfig({ includeDatabase: false })
+);
 
   try {
     await db.query(`CREATE DATABASE IF NOT EXISTS \`${databaseName}\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci`);

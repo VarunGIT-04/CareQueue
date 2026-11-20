@@ -1,15 +1,12 @@
 require("dotenv").config();
 const mysql = require("mysql2/promise");
 const bcrypt = require("bcrypt");
-
+const { getDbConfig } = require("./db-config");
 async function setup() {
   const db = await mysql.createConnection({
-    host: process.env.DB_HOST || "localhost",
-    user: process.env.DB_USER || "root",
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    dateStrings: true
-  });
+  ...getDbConfig(),
+  dateStrings: true
+});
 
   console.log("Connected to MySQL for CareQueue setup...");
 
@@ -54,39 +51,102 @@ async function setup() {
     await db.query("ALTER TABLE appointments ADD COLUMN patient_gender VARCHAR(20) NULL AFTER patient_age");
     console.log("Added column: appointments.patient_gender");
   }
+const bootstrapPasswords = {
+  admin: process.env.BOOTSTRAP_ADMIN_PASSWORD,
+  doctor: process.env.BOOTSTRAP_DOCTOR_PASSWORD,
+  patient: process.env.BOOTSTRAP_PATIENT_PASSWORD
+};
 
-  const defaultDocPassword = await bcrypt.hash("doctor123", 10);
-  const defaultAdminPassword = await bcrypt.hash("admin123", 10);
-  const defaultUserPassword = await bcrypt.hash("varun0560", 10);
+for (const [role, password] of Object.entries(bootstrapPasswords)) {
+  if (!password || password.length < 12) {
+    throw new Error(
+      `BOOTSTRAP_${role.toUpperCase()}_PASSWORD must be set in .env and contain at least 12 characters.`
+    );
+  }
+}
+
+if (new Set(Object.values(bootstrapPasswords)).size !== 3) {
+  throw new Error("Use three different bootstrap passwords.");
+}
+
+const defaultDocPassword = await bcrypt.hash(bootstrapPasswords.doctor, 10);
+const defaultAdminPassword = await bcrypt.hash(bootstrapPasswords.admin, 10);
+const defaultUserPassword = await bcrypt.hash(bootstrapPasswords.patient, 10);
+
+// Record one-time setup operations so rerunning this script does not
+// repeatedly overwrite passwords that users have subsequently changed.
+await db.query(`
+  CREATE TABLE IF NOT EXISTS carequeue_setup_migrations (
+    migration_key VARCHAR(100) PRIMARY KEY,
+    applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  )
+`);
 
   // 3. Setup Admin Account
-  const [adminExists] = await db.query("SELECT id FROM users WHERE email = 'admin@hospital.com'");
+  const [adminExists] = await db.query(
+    "SELECT id FROM users WHERE email = ?",
+    ["admin@hospital.com"]
+  );
+
   if (adminExists.length === 0) {
     await db.query(
       `INSERT INTO users (name, email, password_hash, role, phone)
-       VALUES ('Hospital Administrator', 'admin@hospital.com', ?, 'admin', '+91 98888 11222')`,
-      [defaultAdminPassword]
+       VALUES (?, ?, ?, 'admin', ?)`,
+      [
+        "Hospital Administrator",
+        "admin@hospital.com",
+        defaultAdminPassword,
+        "+91 98888 11222"
+      ]
     );
-    console.log("Created Admin account: admin@hospital.com / admin123");
+    console.log("Created administrator account: admin@hospital.com");
   } else {
+    // Preserve the existing password; the one-time rotation below handles
+    // the previously exposed demo credentials.
     await db.query(
-      "UPDATE users SET role = 'admin', password_hash = ? WHERE email = 'admin@hospital.com'",
-      [defaultAdminPassword]
+      "UPDATE users SET name = ?, role = 'admin' WHERE email = ?",
+      ["Hospital Administrator", "admin@hospital.com"]
     );
   }
 
   // 4. Setup Patient Account (Varun Kumar)
-  const [patientExists] = await db.query("SELECT id FROM users WHERE email = 'varun22042@gmail.com'");
+  const [patientExists] = await db.query(
+    "SELECT id FROM users WHERE email = ?",
+    ["varun22042@gmail.com"]
+  );
+
   if (patientExists.length === 0) {
     await db.query(
-      `INSERT INTO users (name, email, password_hash, role, phone, gender, age, blood_group)
-       VALUES ('Varun Kumar', 'varun22042@gmail.com', ?, 'patient', '+91 98765 43210', 'Male', 24, 'O+')`,
-      [defaultUserPassword]
+      `INSERT INTO users
+       (name, email, password_hash, role, phone, gender, age, blood_group)
+       VALUES (?, ?, ?, 'patient', ?, ?, ?, ?)`,
+      [
+        "Varun Kumar",
+        "varun22042@gmail.com",
+        defaultUserPassword,
+        "+91 98765 43210",
+        "Male",
+        24,
+        "O+"
+      ]
     );
-    console.log("Created Patient account: varun22042@gmail.com / varun0560");
+    console.log("Created patient account: varun22042@gmail.com");
   } else {
+    // Preserve the existing password; one-time rotation is performed below.
     await db.query(
-      "UPDATE users SET name = 'Varun Kumar', role = 'patient', phone = COALESCE(phone, '+91 98765 43210'), gender = 'Male', age = 24, blood_group = 'O+' WHERE email = 'varun22042@gmail.com'"
+      `UPDATE users
+       SET name = ?, role = 'patient',
+           phone = COALESCE(phone, ?),
+           gender = ?, age = ?, blood_group = ?
+       WHERE id = ?`,
+      [
+        "Varun Kumar",
+        "+91 98765 43210",
+        "Male",
+        24,
+        "O+",
+        patientExists[0].id
+      ]
     );
   }
 
@@ -192,7 +252,10 @@ async function setup() {
 
   for (const doc of indianDoctors) {
     // 1. Create or update user account for doctor
-    const [u] = await db.query("SELECT id FROM users WHERE email = ?", [doc.email]);
+    const [u] = await db.query(
+  "SELECT id, password_hash FROM users WHERE email = ?",
+  [doc.email]
+);
     let docUserId;
     if (u.length === 0) {
       const [ins] = await db.query(
@@ -201,12 +264,14 @@ async function setup() {
         [doc.name, doc.email, defaultDocPassword]
       );
       docUserId = ins.insertId;
-      console.log(`Created doctor user: ${doc.email} / doctor123`);
+      console.log(`Created/updated doctor user: ${doc.email}`);
     } else {
       docUserId = u[0].id;
+      // Preserve the existing password. The one-time rotation below handles
+      // the previously exposed demo credentials.
       await db.query(
-        "UPDATE users SET name = ?, role = 'doctor', password_hash = ? WHERE id = ?",
-        [doc.name, defaultDocPassword, docUserId]
+        "UPDATE users SET name = ?, role = 'doctor' WHERE id = ?",
+        [doc.name, docUserId]
       );
     }
 
@@ -230,7 +295,44 @@ async function setup() {
     }
   }
 
-  // 6. Update existing appointments with token numbers and patient details if missing
+  // 6. Rotate all seeded demo account passwords exactly once.
+  // This removes the previously exposed demo credentials without resetting
+  // passwords on future executions of this setup script.
+  const rotationKey = "demo_account_passwords_rotated_v1";
+  const [rotationDone] = await db.query(
+    "SELECT migration_key FROM carequeue_setup_migrations WHERE migration_key = ?",
+    [rotationKey]
+  );
+
+  if (rotationDone.length === 0) {
+    await db.query(
+      "UPDATE users SET password_hash = ? WHERE email = ?",
+      [defaultAdminPassword, "admin@hospital.com"]
+    );
+
+    await db.query(
+      "UPDATE users SET password_hash = ? WHERE email = ?",
+      [defaultUserPassword, "varun22042@gmail.com"]
+    );
+
+    for (const doc of indianDoctors) {
+      await db.query(
+        "UPDATE users SET password_hash = ? WHERE email = ? AND role = 'doctor'",
+        [defaultDocPassword, doc.email]
+      );
+    }
+
+    await db.query(
+      "INSERT INTO carequeue_setup_migrations (migration_key) VALUES (?)",
+      [rotationKey]
+    );
+
+    console.log("Rotated seeded administrator, patient, and doctor passwords once.");
+  } else {
+    console.log("Seeded account password rotation already completed; existing passwords preserved.");
+  }
+
+  // 7. Update existing appointments with token numbers and patient details if missing
   const [apts] = await db.query("SELECT a.id, a.user_id, u.name, u.phone, u.age, u.gender FROM appointments a JOIN users u ON u.id = a.user_id");
   for (const a of apts) {
     const token = `#TKN-${String(100 + a.id)}`;

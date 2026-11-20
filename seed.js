@@ -1,14 +1,11 @@
 require("dotenv").config();
 const mysql = require("mysql2/promise");
-
+const { getDbConfig } = require("./db-config");
 async function seedSampleData() {
   const db = await mysql.createConnection({
-    host: process.env.DB_HOST || "localhost",
-    user: process.env.DB_USER || "root",
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    dateStrings: true
-  });
+  ...getDbConfig(),
+  dateStrings: true
+});
 
   const [users] = await db.query("SELECT id, name, phone, age, gender FROM users WHERE role = 'patient' ORDER BY id LIMIT 1");
   if (users.length > 0) {
